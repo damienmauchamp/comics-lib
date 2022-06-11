@@ -13,11 +13,19 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
+/**
+ * @link https://comicvine.gamespot.com/api/documentation
+ */
 class APIService {
 
 	protected string $url = "https://comicvine.gamespot.com/api";
 	protected string $format = 'json';
 	protected int $limit = 100;
+	protected array $ids = [
+		'volume' => '4050',
+		'issue' => '4000',
+		'publisher' => '4010',
+	];
 	protected ?string $token;
 
 	//
@@ -141,28 +149,148 @@ class APIService {
 
 	/**
 	 * @link https://comicvine.gamespot.com/api/documentation#toc-0-30
-	 * @param string $term
+	 * @param string|null $term
 	 * @param string|null $resource
 	 * @param int $page
+	 * @param string|null $endpoint Custom endpoint
+	 * @param array $filters
 	 * @return array
 	 */
-	public function search(string  $term,
+	public function search(?string $term,
 						   ?string $resource = null,
-						   int     $page = 1): array {
+						   int     $page = 1,
+						   ?string $endpoint = null,
+						   array   $filters = []): array {
 
 		$this->init(true, $page);
 
 		// adding search term
-		$this->params['query'] = $term;
+		if($term) {
+			$this->params['query'] = $term;
+		}
 
 		// adding resource type if there's one
 		$this->addResourcesType($resource);
 
 		// adding field list
-		$this->addFieldList(['id', 'image', 'publisher', 'name', 'start_year', 'count_of_issues']);
+		if(!$endpoint) {
+//			$this->addFieldList(['id', 'image', 'publisher', 'name', 'start_year', 'count_of_issues']);
+		}
+
+		// adding filters
+		if($filters) {
+			$this->params['filter'] = implode(',', array_map(static function ($field, $value) {
+				return "{$field}:{$value}";
+			}, array_keys($filters), $filters));;
+		}
 
 		// request
-		return $this->request('search', 'GET');
+		return $this->request($endpoint ?? 'search', 'GET');
+	}
+
+	/**
+	 * @link https://comicvine.gamespot.com/api/documentation#toc-0-26
+	 * @param int $id
+	 * @return array
+	 */
+	public function publisher(int $id): array {
+
+		$this->init(false);
+
+		// adding field list
+//		$this->addFieldList(['id', 'image']);
+
+		// request
+		return $this->request("publisher/{$this->ids['publisher']}-{$id}", 'GET');
+	}
+
+	/**
+	 * @link https://comicvine.gamespot.com/api/documentation#toc-0-27
+	 * @param string $name
+	 * @param int $page
+	 * @return array
+	 */
+	public function publishers(string $name, int $page = 1): array {
+
+		$this->init(false);
+
+		// adding field list
+//		$this->addFieldList(['id', 'image', 'publisher', 'name', 'start_year', 'count_of_issues']);
+
+		// request
+		return $this->search(null, null, $page, 'publishers', [
+			'name' => $name,
+		]);
+	}
+
+	/**
+	 * @link https://comicvine.gamespot.com/api/documentation#toc-0-42
+	 * @param int $id
+	 * @return array
+	 */
+	public function volume(int $id): array {
+
+		$this->init(false);
+
+		// adding field list
+//		$this->addFieldList(['id', 'image', 'publisher', 'name', 'start_year', 'count_of_issues']);
+
+		// request
+		return $this->request("volume/{$this->ids['volume']}-{$id}", 'GET');
+	}
+
+	/**
+	 * @link https://comicvine.gamespot.com/api/documentation#toc-0-43
+	 * @param string $name
+	 * @param int $page
+	 * @return array
+	 */
+	public function volumes(string $name, int $page = 1): array {
+
+		$this->init(false);
+
+		// adding field list
+//		$this->addFieldList(['id', 'image', 'publisher', 'name', 'start_year', 'count_of_issues']);
+
+		// request
+		return $this->search(null, null, $page, 'volumes', [
+			'name' => $name,
+		]);
+	}
+
+	/**
+	 * @link https://comicvine.gamespot.com/api/documentation#toc-0-10
+	 * @param int $id
+	 * @return array
+	 */
+	public function issue(int $id): array {
+
+		$this->init(false);
+
+		// adding field list
+//		$this->addFieldList(['id', 'image', 'publisher', 'name', 'start_year', 'count_of_issues']);
+
+		// request
+		return $this->request("issue/{$this->ids['issue']}-{$id}", 'GET');
+	}
+
+	/**
+	 * @link https://comicvine.gamespot.com/api/documentation#toc-0-11
+	 * @param string $name
+	 * @param int $page
+	 * @return array
+	 */
+	public function issues(string $name, int $page = 1): array {
+
+		$this->init(false);
+
+		// adding field list
+//		$this->addFieldList(['id', 'image', 'publisher', 'name', 'start_year', 'count_of_issues']);
+
+		// request
+		return $this->search(null, null, $page, 'issues', [
+			'name' => $name,
+		]);
 	}
 
 	////////////
@@ -175,7 +303,6 @@ class APIService {
 
 	public function searchVolume(string $term, int $page = 1): array {
 		return $this->search($term, 'volume', $page);
-
 	}
 
 	public function searchIssue(string $term, int $page = 1): array {

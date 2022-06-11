@@ -30,39 +30,72 @@ class ApiTestController extends AbstractController {
 		]);
 	}
 
-	#[NoReturn] #[Route('/api/search-publisher/{term}/{page<\d+>?1}', name: 'app_api_search_publisher')]
+	#[NoReturn] #[Route('/api/search-publisher/{name}/{page<\d+>?1}', name: 'app_api_search_publisher')]
 	public function searchPublisher(APIService $api,
-									string     $term,
+									string     $name,
 									int        $page): void {
-		$res = $api->searchPublisher($term, $page);
+//		$res = $api->searchPublisher($name, $page);
+		$res = $api->publishers($name, $page);
 		dd($res, [
 			'info' => 'SEARCH PUBLISHERS',
-			'term' => $term,
+			'name' => $name,
 			'page' => $page,
 		]);
 	}
 
-	#[NoReturn] #[Route('/api/search-volume/{term}/{page<\d+>?1}', name: 'app_api_search_volume')]
+	#[NoReturn] #[Route('/api/search-volume/{name}/{page<\d+>?1}', name: 'app_api_search_volume')]
 	public function searchVolume(APIService $api,
-								 string     $term,
+								 string     $name,
 								 int        $page): void {
-		$res = $api->searchVolume($term, $page);
+		$res = $api->searchVolume($name, $page);
+//		$res = $api->volumes($name, $page);
 		dd($res, [
 			'info' => 'SEARCH VOLUMES',
-			'term' => $term,
+			'name' => $name,
 			'page' => $page,
 		]);
 	}
 
-	#[NoReturn] #[Route('/api/search-issue/{term}/{page<\d+>?1}', name: 'app_api_search_issue')]
+	#[NoReturn] #[Route('/api/search-issue/{name}/{page<\d+>?1}', name: 'app_api_search_issue')]
 	public function searchIssue(APIService $api,
-								string     $term,
+								string     $name,
 								int        $page): void {
-		$res = $api->searchIssue($term, $page);
+		$res = $api->searchIssue($name, $page);
+//		$res = $api->issues($name, $page);
 		dd($res, [
 			'info' => 'SEARCH ISSUES',
-			'term' => $term,
+			'name' => $name,
 			'page' => $page,
+		]);
+	}
+
+	#[NoReturn] #[Route('/api/publisher/{id<\d+>}', name: 'app_api_publisher')]
+	public function publisher(APIService $api,
+							  int        $id): void {
+		$res = $api->publisher($id);
+		dd($res, [
+			'info' => 'PUBLISHER',
+			'id' => $id,
+		]);
+	}
+
+	#[NoReturn] #[Route('/api/volume/{id<\d+>}', name: 'app_api_volume')]
+	public function volume(APIService $api,
+						   int        $id): void {
+		$res = $api->volume($id);
+		dd($res, [
+			'info' => 'VOLUME',
+			'id' => $id,
+		]);
+	}
+
+	#[NoReturn] #[Route('/api/issue/{id<\d+>}', name: 'app_api_issue')]
+	public function issue(APIService $api,
+						  int        $id): void {
+		$res = $api->issue($id);
+		dd($res, [
+			'info' => 'ISSUE',
+			'id' => $id,
 		]);
 	}
 }
