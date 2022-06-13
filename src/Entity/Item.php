@@ -38,7 +38,7 @@ class Item {
 	#[ORM\Column(type: 'text')]
 	private $notes;
 
-	#[ORM\ManyToMany(targetEntity: Issue::class, inversedBy: 'items')]
+	#[ORM\OneToMany(mappedBy: 'item', targetEntity: Issue::class)]
 	private $issues;
 
 	public function __construct() {

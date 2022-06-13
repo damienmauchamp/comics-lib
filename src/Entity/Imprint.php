@@ -20,7 +20,7 @@ class Imprint {
 	#[ORM\ManyToOne(targetEntity: Publisher::class, inversedBy: 'imprints')]
 	private $publisher;
 
-	#[ORM\OneToMany(mappedBy: 'imprint', targetEntity: Collection::class)]
+	#[ORM\OneToMany(mappedBy: 'imprint', targetEntity: ItemCollection::class)]
 	private $collections;
 
 	public function __construct() {

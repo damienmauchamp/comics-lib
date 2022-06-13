@@ -17,7 +17,7 @@ class Type {
 	#[ORM\Column(type: 'string', length: 255)]
 	private $name;
 
-	#[ORM\OneToMany(mappedBy: 'type', targetEntity: Collection::class)]
+	#[ORM\OneToMany(mappedBy: 'type', targetEntity: ItemCollection::class)]
 	private $collections;
 
 	public function __construct() {

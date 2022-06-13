@@ -10,150 +10,146 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: IssueRepository::class)]
 class Issue {
 	#[ORM\Id]
-               	#[ORM\GeneratedValue]
-               	#[ORM\Column(type: 'integer')]
-               	private $id;
+	#[ORM\GeneratedValue]
+	#[ORM\Column(type: 'integer')]
+	private $id;
 
 	#[ORM\Column(type: 'integer', nullable: true)]
-               	private $idc;
+	private $idc;
 
 	#[ORM\Column(type: 'string', length: 255, nullable: true)]
-               	private $name;
+	private $name;
 
 	#[ORM\Column(type: 'string', length: 10, nullable: true)]
-               	private $number;
+	private $number;
 
 	#[ORM\Column(type: 'string', length: 255)]
-               	private $image;
+	private $image;
 
 	#[ORM\Column(type: 'datetime', nullable: true)]
-               	private $date_released;
+	private $date_released;
 
 	#[ORM\Column(type: 'datetime')]
-               	private $date_added;
+	private $date_added;
 
 	#[ORM\Column(type: 'datetime')]
-               	private $date_updated;
+	private $date_updated;
 
 	#[ORM\ManyToOne(targetEntity: Volume::class, inversedBy: 'issues')]
-               	private $volume;
+	private $volume;
 
-    #[ORM\ManyToMany(targetEntity: Item::class, mappedBy: 'issues')]
-    private $items;
+	#[ORM\OneToMany(mappedBy: 'issue', targetEntity: ItemIssue::class)]
+	private $items;
 
-	public function __construct()
-             {
-                 $this->items = new ArrayCollection();
-             }
+	public function __construct() {
+		$this->items = new ArrayCollection();
+	}
 
 	public function getId(): ?int {
-               		return $this->id;
-               	}
+		return $this->id;
+	}
 
 	public function getIdc(): ?int {
-               		return $this->idc;
-               	}
+		return $this->idc;
+	}
 
 	public function setIdc(?int $idc): self {
-               		$this->idc = $idc;
-               
-               		return $this;
-               	}
+		$this->idc = $idc;
+
+		return $this;
+	}
 
 	public function getName(): ?string {
-               		return $this->name;
-               	}
+		return $this->name;
+	}
 
 	public function setName(?string $name): self {
-               		$this->name = $name;
-               
-               		return $this;
-               	}
+		$this->name = $name;
+
+		return $this;
+	}
 
 	public function getNumber(): ?string {
-               		return $this->number;
-               	}
+		return $this->number;
+	}
 
 	public function setNumber(?string $number): self {
-               		$this->number = $number;
-               
-               		return $this;
-               	}
+		$this->number = $number;
+
+		return $this;
+	}
 
 	public function getImage(): ?string {
-               		return $this->image;
-               	}
+		return $this->image;
+	}
 
 	public function setImage(string $image): self {
-               		$this->image = $image;
-               
-               		return $this;
-               	}
+		$this->image = $image;
+
+		return $this;
+	}
 
 	public function getDateReleased(): ?\DateTimeInterface {
-               		return $this->date_released;
-               	}
+		return $this->date_released;
+	}
 
 	public function setDateReleased(?\DateTimeInterface $date_released): self {
-               		$this->date_released = $date_released;
-               
-               		return $this;
-               	}
+		$this->date_released = $date_released;
+
+		return $this;
+	}
 
 	public function getDateAdded(): ?\DateTimeInterface {
-               		return $this->date_added;
-               	}
+		return $this->date_added;
+	}
 
 	public function setDateAdded(\DateTimeInterface $date_added): self {
-               		$this->date_added = $date_added;
-               
-               		return $this;
-               	}
+		$this->date_added = $date_added;
+
+		return $this;
+	}
 
 	public function getDateUpdated(): ?\DateTimeInterface {
-               		return $this->date_updated;
-               	}
+		return $this->date_updated;
+	}
 
 	public function setDateUpdated(\DateTimeInterface $date_updated): self {
-               		$this->date_updated = $date_updated;
-               
-               		return $this;
-               	}
+		$this->date_updated = $date_updated;
+
+		return $this;
+	}
 
 	public function getVolume(): ?Volume {
-               		return $this->volume;
-               	}
+		return $this->volume;
+	}
 
 	public function setVolume(?Volume $volume): self {
-               		$this->volume = $volume;
-               
-               		return $this;
-               	}
+		$this->volume = $volume;
 
-    /**
-     * @return Collection<int, Item>
-     */
-    public function getItems(): Collection
-    {
-        return $this->items;
-    }
+		return $this;
+	}
 
-    public function addItem(Item $item): self
-    {
-        if (!$this->items->contains($item)) {
-            $this->items[] = $item;
-            $item->addIssue($this);
-        }
+	/**
+	 * @return Collection<int, Item>
+	 */
+	public function getItems(): Collection {
+		return $this->items;
+	}
 
-        return $this;
-    }
+	public function addItem(Item $item): self {
+		if(!$this->items->contains($item)) {
+			$this->items[] = $item;
+			$item->addIssue($this);
+		}
 
-    public function removeItem(Item $item): self
-    {
-        if ($this->items->removeElement($item)) {
-            $item->removeIssue($this);
-        }
+		return $this;
+	}
 
-        return $this;
-    }
+	public function removeItem(Item $item): self {
+		if($this->items->removeElement($item)) {
+			$item->removeIssue($this);
+		}
+
+		return $this;
+	}
 }
