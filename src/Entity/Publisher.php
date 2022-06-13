@@ -8,143 +8,200 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PublisherRepository::class)]
-class Publisher
-{
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private $id;
+class Publisher {
+	#[ORM\Id]
+	#[ORM\GeneratedValue]
+	#[ORM\Column(type: 'integer')]
+	private $id;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $idc;
+	#[ORM\Column(type: 'integer', nullable: true)]
+	private $idc;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+	#[ORM\Column(type: 'string', length: 255)]
+	private $name;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private $description;
+	#[ORM\Column(type: 'text', nullable: true)]
+	private $description;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $image;
+	#[ORM\Column(type: 'string', length: 255)]
+	private $image;
 
-    #[ORM\Column(type: 'datetime')]
-    private $date_added;
+	#[ORM\Column(type: 'datetime')]
+	private $date_added;
 
-    #[ORM\Column(type: 'datetime')]
-    private $date_updated;
+	#[ORM\Column(type: 'datetime')]
+	private $date_updated;
 
-    #[ORM\OneToMany(mappedBy: 'publisher', targetEntity: Volume::class)]
-    private $volumes;
+	#[ORM\OneToMany(mappedBy: 'publisher', targetEntity: Volume::class)]
+	private $volumes;
 
-    public function __construct()
-    {
-        $this->volumes = new ArrayCollection();
-    }
+	#[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'affiliations')]
+	private $affiliated;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+	#[ORM\OneToMany(mappedBy: 'affiliated', targetEntity: self::class)]
+	private $affiliations;
 
-    public function getIdc(): ?int
-    {
-        return $this->idc;
-    }
+	#[ORM\OneToMany(mappedBy: 'publisher', targetEntity: Imprint::class)]
+	private $imprints;
 
-    public function setIdc(?int $idc): self
-    {
-        $this->idc = $idc;
+	public function __construct() {
+		$this->volumes = new ArrayCollection();
+		$this->affiliations = new ArrayCollection();
+		$this->imprints = new ArrayCollection();
+	}
 
-        return $this;
-    }
+	public function getId(): ?int {
+		return $this->id;
+	}
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
+	public function getIdc(): ?int {
+		return $this->idc;
+	}
 
-    public function setName(string $name): self
-    {
-        $this->name = $name;
+	public function setIdc(?int $idc): self {
+		$this->idc = $idc;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
+	public function getName(): ?string {
+		return $this->name;
+	}
 
-    public function setDescription(?string $description): self
-    {
-        $this->description = $description;
+	public function setName(string $name): self {
+		$this->name = $name;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
+	public function getDescription(): ?string {
+		return $this->description;
+	}
 
-    public function setImage(string $image): self
-    {
-        $this->image = $image;
+	public function setDescription(?string $description): self {
+		$this->description = $description;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getDateAdded(): ?\DateTimeInterface
-    {
-        return $this->date_added;
-    }
+	public function getImage(): ?string {
+		return $this->image;
+	}
 
-    public function setDateAdded(\DateTimeInterface $date_added): self
-    {
-        $this->date_added = $date_added;
+	public function setImage(string $image): self {
+		$this->image = $image;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getDateUpdated(): ?\DateTimeInterface
-    {
-        return $this->date_updated;
-    }
+	public function getDateAdded(): ?\DateTimeInterface {
+		return $this->date_added;
+	}
 
-    public function setDateUpdated(\DateTimeInterface $date_updated): self
-    {
-        $this->date_updated = $date_updated;
+	public function setDateAdded(\DateTimeInterface $date_added): self {
+		$this->date_added = $date_added;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * @return Collection<int, Volume>
-     */
-    public function getVolumes(): Collection
-    {
-        return $this->volumes;
-    }
+	public function getDateUpdated(): ?\DateTimeInterface {
+		return $this->date_updated;
+	}
 
-    public function addVolume(Volume $volume): self
-    {
-        if (!$this->volumes->contains($volume)) {
-            $this->volumes[] = $volume;
-            $volume->setPublisher($this);
-        }
+	public function setDateUpdated(\DateTimeInterface $date_updated): self {
+		$this->date_updated = $date_updated;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function removeVolume(Volume $volume): self
-    {
-        if ($this->volumes->removeElement($volume)) {
-            // set the owning side to null (unless already changed)
-            if ($volume->getPublisher() === $this) {
-                $volume->setPublisher(null);
-            }
-        }
+	/**
+	 * @return ItemCollection<int, Volume>
+	 */
+	public function getVolumes(): Collection {
+		return $this->volumes;
+	}
 
-        return $this;
-    }
+	public function addVolume(Volume $volume): self {
+		if(!$this->volumes->contains($volume)) {
+			$this->volumes[] = $volume;
+			$volume->setPublisher($this);
+		}
+
+		return $this;
+	}
+
+	public function removeVolume(Volume $volume): self {
+		if($this->volumes->removeElement($volume)) {
+			// set the owning side to null (unless already changed)
+			if($volume->getPublisher() === $this) {
+				$volume->setPublisher(null);
+			}
+		}
+
+		return $this;
+	}
+
+	public function getAffiliated(): ?self {
+		return $this->affiliated;
+	}
+
+	public function setAffiliated(?self $affiliated): self {
+		$this->affiliated = $affiliated;
+
+		return $this;
+	}
+
+	/**
+	 * @return ItemCollection<int, self>
+	 */
+	public function getAffiliations(): Collection {
+		return $this->affiliations;
+	}
+
+	public function addAffiliation(self $affiliation): self {
+		if(!$this->affiliations->contains($affiliation)) {
+			$this->affiliations[] = $affiliation;
+			$affiliation->setAffiliated($this);
+		}
+
+		return $this;
+	}
+
+	public function removeAffiliation(self $affiliation): self {
+		if($this->affiliations->removeElement($affiliation)) {
+			// set the owning side to null (unless already changed)
+			if($affiliation->getAffiliated() === $this) {
+				$affiliation->setAffiliated(null);
+			}
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @return ItemCollection<int, Imprint>
+	 */
+	public function getImprints(): Collection {
+		return $this->imprints;
+	}
+
+	public function addImprint(Imprint $imprint): self {
+		if(!$this->imprints->contains($imprint)) {
+			$this->imprints[] = $imprint;
+			$imprint->setPublisher($this);
+		}
+
+		return $this;
+	}
+
+	public function removeImprint(Imprint $imprint): self {
+		if($this->imprints->removeElement($imprint)) {
+			// set the owning side to null (unless already changed)
+			if($imprint->getPublisher() === $this) {
+				$imprint->setPublisher(null);
+			}
+		}
+
+		return $this;
+	}
 }
