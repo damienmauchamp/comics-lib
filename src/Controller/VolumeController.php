@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Issue;
 use App\Entity\Volume;
+use App\Repository\IssueRepository;
 use App\Repository\PublisherRepository;
 use App\Repository\VolumeRepository;
 use App\Service\APIService;
@@ -20,6 +22,7 @@ class VolumeController extends AbstractController {
 						   RequestStack        $requestStack,
 						   VolumeRepository    $volumeRepo,
 						   PublisherRepository $publisherRepo,
+						   IssueRepository     $issueRepo,
 						   int                 $id): JsonResponse {
 
 		$force_update = $requestStack->getCurrentRequest()->get('force_update', false);
@@ -64,7 +67,7 @@ class VolumeController extends AbstractController {
 					'start_year' => $volume->getStartYear(),
 					'date_added' => $volume->getDateAdded()->format('Y-m-d H:i:s'),
 					'date_updated' => $volume->getDateUpdated()->format('Y-m-d H:i:s'),
-					'url' => "https://comicvine.gamespot.com/urban-comics/4050-{$volume->getIdc()}/"
+					'url' => "https://comicvine.gamespot.com/publisher/4050-{$volume->getIdc()}/"
 				],
 			]);
 		}
@@ -84,7 +87,7 @@ class VolumeController extends AbstractController {
 
 		// if we can't find the publisher or his updated date is older than one month, we create/update it
 		if(empty($publisher) || $publisher->getDateUpdated() < ((new DateTime())->sub(new \DateInterval('P1M')))) {
-			$response = $this->forward('App\Controller\PublisherController::update', [
+			$publisherResponse = $this->forward('App\Controller\PublisherController::update', [
 				'id' => $id_publisher,
 			]);
 			$publisher = $publisherRepo->findOneBy(['idc' => $id_publisher]);
@@ -94,8 +97,52 @@ class VolumeController extends AbstractController {
 		// saving the volume
 		$volumeRepo->add($volume, true);
 
-		// todo : add volume issues
-//		dd($volume, $volumeData, $publisher, $response);
+		// getting the issues from the request
+		$issuesResponse = $api->volumeIssues($id);
+		if($issuesResponse['error']) {
+			return new JsonResponse([
+				'status' => 'error',
+				'message' => "Couldn't add or update the issues : ".($issuesResponse['message'] ?? ""),
+				'response' => $issuesResponse,
+			]);
+		}
+		$issuesData = $issuesResponse['data'];
+
+		// updating the issues
+		foreach($issuesData as $issueData) {
+			$id_issue = $issueData['id'];
+
+			// checking if the issue exists
+			$issue = $issueRepo->findOneBy(['idc' => $id_issue]);
+			if(empty($issue)) {
+				// if not, we create it
+				$issue = new Issue();
+				$issue->setDateAdded(new DateTime());
+			}
+
+			// checking the updated date
+			$updated = new DateTime($issueData['date_last_updated']);
+			if($updated < $issue->getDateUpdated()) {
+				continue;
+			}
+
+			// updating the issue
+			$issue->setVolume($volume);
+			$issue->setIdc($id_issue);
+			$issue->setName($issueData['name']);
+//			$issue->setDescription($issueData['deck']);
+			$issue->setImage($issueData['image']['original_url']);
+			$issue->setDateUpdated(new DateTime());
+			$issue->setNumber($issueData['issue_number']);
+			$issue->setDateReleased(new DateTime($issueData['store_date']));
+//			"https://comicvine.gamespot.com/issue/4000-{$issue->getIdc()}/"
+
+			// saving the issue
+			$issueRepo->add($issue, true);
+//			$this->forward('App\Controller\IssueController::update', [
+//				'id' => $issueData['id'],
+//			]);
+		}
 
 		return new JsonResponse([
 			'status' => 'success',
@@ -106,6 +153,8 @@ class VolumeController extends AbstractController {
 				'description' => $volume->getDescription(),
 				'image' => $volume->getImage(),
 				'number_issues' => $volume->getNumberIssues(),
+				'issues_count' => $volume->getIssues()->count(),
+				'issues' => $volume->getIssues(),
 				'publisher' => [
 					'idc' => $volume->getPublisher()->getIdc(),
 					'name' => $volume->getPublisher()->getName(),
@@ -115,7 +164,7 @@ class VolumeController extends AbstractController {
 				'start_year' => $volume->getStartYear(),
 				'date_added' => $volume->getDateAdded()->format('Y-m-d H:i:s'),
 				'date_updated' => $volume->getDateUpdated()->format('Y-m-d H:i:s'),
-				'url' => "https://comicvine.gamespot.com/urban-comics/4050-{$volume->getIdc()}/"
+				'url' => "https://comicvine.gamespot.com/volume/4050-{$volume->getIdc()}/"
 			],
 		]);
 
