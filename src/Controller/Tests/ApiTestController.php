@@ -98,4 +98,16 @@ class ApiTestController extends AbstractController {
 			'id' => $id,
 		]);
 	}
+
+	#[NoReturn] #[Route('/api/volume-issues/{id_volume<\d+>}/{page<\d+>?1}', name: 'app_api_volume_issues')]
+	public function issuesByVolume(APIService $api,
+								   int        $id_volume,
+								   int        $page): void {
+		$res = $api->volumeIssues($id_volume, $page);
+		dd($res, [
+			'info' => 'SEARCH VOLUME ISSUES',
+			'id_volume' => $id_volume,
+			'page' => $page,
+		]);
+	}
 }

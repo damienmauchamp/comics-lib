@@ -63,7 +63,7 @@ class APIService {
 			$this->params['limit'] = $this->limit;
 			if($page) {
 				// page
-//				$this->params['offset'] = ($page - 1) * $this->limit;
+				$this->params['offset'] = ($page - 1) * $this->limit;
 				$this->params['page'] = $page;
 			}
 		}
@@ -80,6 +80,7 @@ class APIService {
 		];
 	}
 
+	#[ArrayShape(['error' => "bool", 'message' => "mixed|null|string", 'code' => "int|null", 'data' => "array|mixed", 'api' => "array"])]
 	private function response(ResponseInterface $response): array {
 		try {
 			$code = $response->getStatusCode();
@@ -93,6 +94,7 @@ class APIService {
 			'code' => $code,
 			'data' => [],
 			'api' => [
+				'url' => $response->getInfo()['url'],
 				'error' => null,
 				'limit' => null,
 				'offset' => null,
@@ -107,7 +109,7 @@ class APIService {
 		try {
 			// request is successful
 			$array = $response->toArray();
-			$data['api'] = $array;
+			$data['api'] = array_merge($data['api'], $array);
 			$data['data'] = $array['results'];
 			$data['error'] = false;
 
@@ -118,13 +120,13 @@ class APIService {
 			}
 		} catch(ClientExceptionInterface $e) {
 			// 4xx errors
-			$data['api'] = json_decode($response->getContent(), true);
+			$data['api'] = array_merge($data['api'], json_decode($response->getContent(), true));
 			$data['data'] = [];
 			$data['error'] = true;
 			$data['message'] = $data['api']['results'] ?? null;
 		} catch(DecodingExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface|TransportExceptionInterface|Exception $e) {
 			// 5xx errors & other errors
-			$data['api'] = null;
+//			$data['api'] = null;
 			$data['data'] = [];
 			$data['error'] = true;
 			$data['message'] = $e->getMessage();
@@ -162,6 +164,10 @@ class APIService {
 	}
 
 	//
+
+	/**
+	 * @throws Exception
+	 */
 	private function addResourcesType(?string $resource = null): void {
 		if($resource) {
 			$this->checkResourceType($resource);
@@ -203,7 +209,11 @@ class APIService {
 		}
 
 		// adding resource type if there's one
-		$this->addResourcesType($resource);
+		try {
+			$this->addResourcesType($resource);
+		} catch(Exception $e) {
+			return $this->error($e->getMessage());
+		}
 
 		// adding field list
 //		if(!$endpoint) {
@@ -309,21 +319,29 @@ class APIService {
 
 	/**
 	 * @link https://comicvine.gamespot.com/api/documentation#toc-0-11
+	 * @param int|null $id_volume
 	 * @param string $name
 	 * @param int $page
 	 * @return array
 	 */
-	public function issues(string $name, int $page = 1): array {
-
-		$this->init(false);
+	public function issues(?int $id_volume = null, string $name = '', int $page = 1): array {
 
 		// adding field list
 //		$this->addFieldList(['id', 'image', 'publisher', 'name', 'start_year', 'count_of_issues']);
 
 		// request
-		return $this->search(null, null, $page, 'issues', [
-			'name' => $name,
-		]);
+		$filters = [];
+		if($id_volume) {
+			$filters['volume'] = $id_volume;
+		}
+		if($name) {
+			$filters['name'] = $name;
+		}
+		return $this->search(null, null, $page, 'issues', $filters);
+	}
+
+	public function volumeIssues(int $id_volume, int $page = 1): array {
+		return $this->issues($id_volume, '', $page);
 	}
 
 	////////////
