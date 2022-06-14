@@ -30,6 +30,9 @@ class APIService {
 	];
 	protected ?string $token;
 
+	private int $repetitions = 0;
+	private int $max_repetitions = 3;
+
 	//
 	private array $params = [];
 
@@ -54,6 +57,7 @@ class APIService {
 	 */
 	private function init(bool $limit = true,
 						  ?int $page = null): void {
+		$this->repetitions = 0;
 		$this->params = [
 			'api_key' => $this->token,
 			'format' => $this->format,
@@ -81,7 +85,8 @@ class APIService {
 	}
 
 	#[ArrayShape(['error' => "bool", 'message' => "mixed|null|string", 'code' => "int|null", 'data' => "array|mixed", 'api' => "array"])]
-	private function response(ResponseInterface $response): array {
+	private function response(ResponseInterface  $response,
+							  ?ResponseInterface $prev = null): array {
 		try {
 			$code = $response->getStatusCode();
 		} catch(TransportExceptionInterface $e) {
@@ -156,11 +161,65 @@ class APIService {
 
 		try {
 			// make request
-			$response = $this->client->request($method, $url, $params);
-			return $this->response($response);
+			$request = $this->client->request($method, $url, $params);
+			$response = $this->response($request);
+
+			// checking if there's more than one page
+			if($endpoint !== 'search') {
+				// if so, we're fetching all pages
+				$this->subRequest($response, $method, $url, $params);
+			}
+
+			return $response;
 		} catch(TransportExceptionInterface $e) {
 			return $this->error($e->getMessage());
 		}
+	}
+
+	/**
+	 * @param array $response
+	 * @param string $method
+	 * @param string $url
+	 * @param array $params
+	 * @throws TransportExceptionInterface
+	 */
+	private function subRequest(array &$response, string $method, string $url, array $params): void {
+
+		$offset = $response['api']['offset'];
+		$limit = $response['api']['limit'];
+		$page = ($offset + $limit) / $limit;
+
+		while($this->hasNextPage($response)) {
+
+			$this->repetitions++;
+			if(isset($params['query']['offset'])) {
+				$params['query']['offset'] = $offset + $limit;
+			}
+			if(isset($params['query']['page'])) {
+				$params['query']['page'] = $page + 1;
+			}
+
+			$request = $this->client->request($method, $url, $params);
+			$sub_response = $this->response($request);
+			$sub_response['data'] = array_merge($response['data'], $sub_response['data']);
+			$response = $sub_response;
+		}
+	}
+
+	/**
+	 * Checks if there's another page to fetch
+	 * @param array $response
+	 * @return bool
+	 */
+	private function hasNextPage(array $response): bool {
+
+		$offset = $response['api']['offset'];
+		$limit = $response['api']['limit'];
+		$total = $response['api']['number_of_total_results'];
+		$page = ($offset + $limit) / $limit;
+		$results = $page * $limit;
+
+		return $total > $results && $this->repetitions < $this->max_repetitions;
 	}
 
 	//
