@@ -23,7 +23,11 @@ class VolumeController extends AbstractController {
 						   VolumeRepository    $volumeRepo,
 						   PublisherRepository $publisherRepo,
 						   IssueRepository     $issueRepo,
-						   int                 $id): JsonResponse {
+						   int                 $id,
+						   array               $params = [],
+						   array               $issues = [],
+						   int                 $id_force = null,
+						   int                 $id_start = null): JsonResponse {
 
 		$force_update = $requestStack->getCurrentRequest()->get('force_update', true);
 
@@ -33,6 +37,19 @@ class VolumeController extends AbstractController {
 			// if not, we create it
 			$volume = new Volume();
 			$volume->setDateAdded(new DateTime());
+		}
+		else if($id_force && $id_force === $volume->getId() || $id_start && $id_start <= $volume->getId()) {
+			$force_update = true;
+		}
+
+		if($id_force && $id_force != $volume->getId() ||
+			$id_start && $volume->getId() && $id_start > $volume->getId()) {
+			return new JsonResponse([
+				'status' => 'ok',
+				'message' => "No need to update",
+				'skipped' => true,
+				'response' => [],
+			]);
 		}
 
 		// getting the data from the request
@@ -80,6 +97,7 @@ class VolumeController extends AbstractController {
 		$volume->setDateUpdated(new DateTime());
 		$volume->setNumberIssues($volumeData['count_of_issues']);
 		$volume->setStartYear($volumeData['start_year']);
+		$volume->setDateIgnored($params['date_ignored'] ?? null);
 
 		// trying to find the publisher
 		$id_publisher = $volumeData['publisher']['id'];
@@ -111,6 +129,12 @@ class VolumeController extends AbstractController {
 		// updating the issues
 		foreach($issuesData as $issueData) {
 			$id_issue = $issueData['id'];
+			$date_read = null;
+
+			$key = array_search($id_issue, array_column($issues, 'id_comicvine'));
+			if(isset($issues[$key]) && $issues[$key]['read'] !== null) {
+				$date_read = new DateTime($issues[$key]['read']);
+			}
 
 			// checking if the issue exists
 			$issue = $issueRepo->findOneBy(['idc' => $id_issue]);
@@ -122,9 +146,9 @@ class VolumeController extends AbstractController {
 
 			// checking the updated date
 			$updated = new DateTime($issueData['date_last_updated']);
-			if($updated < $issue->getDateUpdated()) {
-				continue;
-			}
+//			if($updated < $issue->getDateUpdated()) {
+//				continue;
+//			}
 
 			// updating the issue
 			$issue->setVolume($volume);
@@ -135,6 +159,7 @@ class VolumeController extends AbstractController {
 			$issue->setDateUpdated(new DateTime());
 			$issue->setNumber($issueData['issue_number']);
 			$issue->setDateReleased(new DateTime($issueData['store_date']));
+			$issue->setDateRead($date_read);
 //			"https://comicvine.gamespot.com/issue/4000-{$issue->getIdc()}/"
 
 			// saving the issue
@@ -143,6 +168,8 @@ class VolumeController extends AbstractController {
 //				'id' => $issueData['id'],
 //			]);
 		}
+
+//		dd($issuesData, $volume);
 
 		return new JsonResponse([
 			'status' => 'success',
@@ -154,7 +181,22 @@ class VolumeController extends AbstractController {
 				'image' => $volume->getImage(),
 				'number_issues' => $volume->getNumberIssues(),
 				'issues_count' => $volume->getIssues()->count(),
-				'issues' => $volume->getIssues(),
+//				'issues' => $volume->getIssues(),
+//				isRead
+//				isIgnored
+				'issues' => array_map(function ($issue) {
+//					$issue->setIsRead($issue->getDateRead() !== null);
+					return [
+						'idc' => $issue->getIdc(),
+						'name' => $issue->getName(),
+//						'description' => $issue->getDescription(),
+						'image' => $issue->getImage(),
+						'date_released' => $issue->getDateReleased()->format('Y-m-d H:i:s'),
+						'date_read' => $issue->getDateRead()?->format('Y-m-d H:i:s'),
+						'is_read' => $issue->isRead(),
+						'is_ignored' => $issue->isIgnored(),
+					];
+				}, $volume->getIssues()->toArray()),
 				'publisher' => [
 					'idc' => $volume->getPublisher()->getIdc(),
 					'name' => $volume->getPublisher()->getName(),

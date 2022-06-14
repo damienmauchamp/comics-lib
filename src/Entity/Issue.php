@@ -200,6 +200,10 @@ class Issue {
 		return $this;
 	}
 
+	public function isRead(): bool {
+		return $this->date_read !== null;
+	}
+
 	public function getDateIgnored(): ?\DateTimeInterface {
 		return $this->date_ignored;
 	}
@@ -208,5 +212,9 @@ class Issue {
 		$this->date_ignored = $date_ignored;
 
 		return $this;
+	}
+
+	public function isIgnored(): bool {
+		return $this->date_ignored !== null;
 	}
 }

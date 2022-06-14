@@ -185,6 +185,10 @@ class APIService {
 	 */
 	private function subRequest(array &$response, string $method, string $url, array $params): void {
 
+		if(!$response['api']['number_of_total_results']) {
+			return;
+		}
+
 		$offset = $response['api']['offset'];
 		$limit = $response['api']['limit'];
 		$page = ($offset + $limit) / $limit;
