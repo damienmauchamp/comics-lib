@@ -44,6 +44,12 @@ class Issue {
 	#[ORM\OneToMany(mappedBy: 'issue', targetEntity: IssueBackup::class)]
 	private $backups;
 
+	#[ORM\Column(type: 'datetime', nullable: true)]
+	private $date_read;
+
+	#[ORM\Column(type: 'datetime', nullable: true)]
+	private $date_ignored;
+
 	public function __construct() {
 		$this->items = new ArrayCollection();
 		$this->backups = new ArrayCollection();
@@ -180,6 +186,26 @@ class Issue {
 				$backup->setIssue(null);
 			}
 		}
+
+		return $this;
+	}
+
+	public function getDateRead(): ?\DateTimeInterface {
+		return $this->date_read;
+	}
+
+	public function setDateRead(?\DateTimeInterface $date_read): self {
+		$this->date_read = $date_read;
+
+		return $this;
+	}
+
+	public function getDateIgnored(): ?\DateTimeInterface {
+		return $this->date_ignored;
+	}
+
+	public function setDateIgnored(?\DateTimeInterface $date_ignored): self {
+		$this->date_ignored = $date_ignored;
 
 		return $this;
 	}
