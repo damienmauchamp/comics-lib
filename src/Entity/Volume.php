@@ -38,6 +38,15 @@ class Volume {
 	#[ORM\OneToMany(mappedBy: 'volume', targetEntity: Issue::class)]
 	private $issues;
 
+	#[ORM\Column(type: 'datetime')]
+	private $date_added;
+
+	#[ORM\Column(type: 'datetime')]
+	private $date_updated;
+
+	#[ORM\Column(type: 'datetime', nullable: true)]
+	private $date_ignored;
+
 	public function __construct() {
 		$this->issues = new ArrayCollection();
 	}
@@ -139,6 +148,36 @@ class Volume {
 				$issue->setVolume(null);
 			}
 		}
+
+		return $this;
+	}
+
+	public function getDateAdded(): ?\DateTimeInterface {
+		return $this->date_added;
+	}
+
+	public function setDateAdded(\DateTimeInterface $date_added): self {
+		$this->date_added = $date_added;
+
+		return $this;
+	}
+
+	public function getDateUpdated(): ?\DateTimeInterface {
+		return $this->date_updated;
+	}
+
+	public function setDateUpdated(\DateTimeInterface $date_updated): self {
+		$this->date_updated = $date_updated;
+
+		return $this;
+	}
+
+	public function getDateIgnored(): ?\DateTimeInterface {
+		return $this->date_ignored;
+	}
+
+	public function setDateIgnored(?\DateTimeInterface $date_ignored): self {
+		$this->date_ignored = $date_ignored;
 
 		return $this;
 	}

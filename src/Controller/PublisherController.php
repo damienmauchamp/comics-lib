@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Publisher;
 use App\Repository\PublisherRepository;
 use App\Service\APIService;
+use DateTime;
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,13 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PublisherController extends AbstractController {
 
-	#[NoReturn] #[Route('/publisher/{id}/update', name: 'app_publisher_update',
-		methods: ['GET', 'POST'])]
 	/**
 	 * @throws Exception
-	 * @todo remove GET
 	 * @todo make the route POST "/publisher/{id}"
+	 * @todo remove GET
 	 */
+	#[NoReturn] #[Route('/publisher/{id}/update', name: 'app_publisher_update',
+		methods: ['GET', 'POST'])]
 	public function update(APIService          $api,
 						   RequestStack        $requestStack,
 						   PublisherRepository $publisherRepo,
@@ -30,11 +31,12 @@ class PublisherController extends AbstractController {
 		// checking if the publisher exists
 		$publisher = $publisherRepo->findOneBy(['idc' => $id]);
 		if(empty($publisher)) {
+			// if not, we create it
 			$publisher = new Publisher();
-			$publisher->setDateAdded(new \DateTime());
+			$publisher->setDateAdded(new DateTime());
 		}
 
-		// if not, we create it
+		// getting the data from the request
 		$response = $api->publisher($id);
 		if($response['error']) {
 			return new JsonResponse([
@@ -46,7 +48,7 @@ class PublisherController extends AbstractController {
 		$publisherData = $response['data'];
 
 		// checking the updated date
-		$updated = new \DateTime($publisherData['date_last_updated']);
+		$updated = new DateTime($publisherData['date_last_updated']);
 		if($updated < $publisher->getDateUpdated()) {
 			return new JsonResponse([
 				'status' => 'ok',
@@ -69,7 +71,7 @@ class PublisherController extends AbstractController {
 		$publisher->setName($publisherData['name']);
 		$publisher->setDescription($publisherData['deck']);
 		$publisher->setImage($publisherData['image']['original_url']);
-		$publisher->setDateUpdated(new \DateTime());
+		$publisher->setDateUpdated(new DateTime());
 
 		// saving the publisher
 		$publisherRepo->add($publisher, true);
