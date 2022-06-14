@@ -4,6 +4,7 @@ namespace App\Service;
 
 use Exception;
 
+use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -12,6 +13,7 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /**
  * @link https://comicvine.gamespot.com/api/documentation
@@ -67,6 +69,70 @@ class APIService {
 		}
 	}
 
+	#[ArrayShape(['error' => "bool", 'message' => "string", 'code' => "null", 'data' => "array", 'api' => "array"])]
+	private function error(string $message = '', ?array $data = null): array {
+		return [
+			'error' => true,
+			'message' => $message,
+			'code' => null,
+			'data' => $data ?? [],
+			'api' => [],
+		];
+	}
+
+	private function response(ResponseInterface $response): array {
+		try {
+			$code = $response->getStatusCode();
+		} catch(TransportExceptionInterface $e) {
+			$code = null;
+		}
+
+		$data = [
+			'error' => false,
+			'message' => null,
+			'code' => $code,
+			'data' => [],
+			'api' => [
+				'error' => null,
+				'limit' => null,
+				'offset' => null,
+				'number_of_page_results' => null,
+				'number_of_total_results' => null,
+				'status_code' => null,
+				'results' => null,
+				'version' => null,
+			]
+		];
+
+		try {
+			// request is successful
+			$array = $response->toArray();
+			$data['api'] = $array;
+			$data['data'] = $array['results'];
+			$data['error'] = false;
+
+			if($array['error'] !== 'OK') {
+				// object not found
+				$data['error'] = true;
+				$data['message'] = $array['error'];
+			}
+		} catch(ClientExceptionInterface $e) {
+			// 4xx errors
+			$data['api'] = json_decode($response->getContent(), true);
+			$data['data'] = [];
+			$data['error'] = true;
+			$data['message'] = $data['api']['results'] ?? null;
+		} catch(DecodingExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface|TransportExceptionInterface|Exception $e) {
+			// 5xx errors & other errors
+			$data['api'] = null;
+			$data['data'] = [];
+			$data['error'] = true;
+			$data['message'] = $e->getMessage();
+		}
+
+		return $data;
+	}
+
 	/**
 	 * @param string $endpoint
 	 * @param string $method
@@ -86,45 +152,12 @@ class APIService {
 		// TODO : API logger
 		$this->logger->info("[API] $method /{$endpoint} ", ['params' => $params]);
 
-//		dump($params['query']);
-
-		// TODO : format data
 		try {
+			// make request
 			$response = $this->client->request($method, $url, $params);
-
-			// OK
-			try {
-				$data = $response->toArray();
-//				dd('OK', $data, $params);
-				return $data;
-			} catch(ClientExceptionInterface $e) {
-				// Erreur 4xx
-//				$data = $e->getResponse()->toArray(false);
-				$data = $e->getResponse();
-//				dd('4xx ERROR', $data);
-				return $data;
-			} catch(DecodingExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface $e) {
-//				dd('HttpClientException ERROR', $e->getMessage());
-				return [
-					'error' => $e->getMessage(),
-				];
-			} catch(TransportExceptionInterface $e) {
-				// if nothing happens for 2.5 seconds when
-//				dd('Timeout ERROR', $e->getMessage());
-				return [
-					'error' => $e->getMessage(),
-				];
-			} catch(Exception $e) {
-				// Error
-//				dd('Exception (JSON)', $e->getMessage());
-				return [
-					'error' => $e->getMessage(),
-				];
-			}
+			return $this->response($response);
 		} catch(TransportExceptionInterface $e) {
-			return [
-				'error' => $e->getMessage(),
-			];
+			return $this->error($e->getMessage());
 		}
 	}
 
@@ -173,9 +206,9 @@ class APIService {
 		$this->addResourcesType($resource);
 
 		// adding field list
-		if(!$endpoint) {
+//		if(!$endpoint) {
 //			$this->addFieldList(['id', 'image', 'publisher', 'name', 'start_year', 'count_of_issues']);
-		}
+//		}
 
 		// adding filters
 		if($filters) {

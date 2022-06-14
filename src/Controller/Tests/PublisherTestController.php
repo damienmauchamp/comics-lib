@@ -41,13 +41,14 @@ class PublisherTestController extends AbstractController {
 
 		// if not, we create it
 		$response = $api->publisher($id);
-		if($response['error'] !== 'OK') {
+		if($response['error']) {
 			return new JsonResponse([
 				'status' => 'error',
-				'message' => 'Publisher not found or API error',
+				'message' => 'Publisher not found or API error : '.($response['message'] ?? ""),
+				'response' => $response,
 			]);
 		}
-		$publisherData = $response['results'];
+		$publisherData = $response['data'];
 
 		// checking the updated date
 		$updated = new \DateTime($publisherData['date_last_updated']);
@@ -62,7 +63,8 @@ class PublisherTestController extends AbstractController {
 					'image' => $publisher->getImage(),
 					'date_added' => $publisher->getDateAdded()->format('Y-m-d H:i:s'),
 					'date_updated' => $publisher->getDateUpdated()->format('Y-m-d H:i:s'),
-					'url' => "https://comicvine.gamespot.com/urban-comics/4010-{$publisher->getIdc()}/"
+					'date_last_updated' => $publisherData['date_last_updated'],
+					'url' => "https://comicvine.gamespot.com/urban-comics/4010-{$publisher->getIdc()}/",
 				],
 			]);
 		}
