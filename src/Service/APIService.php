@@ -86,7 +86,7 @@ class APIService {
 		// TODO : API logger
 		$this->logger->info("[API] $method /{$endpoint} ", ['params' => $params]);
 
-		dump($params['query']);
+//		dump($params['query']);
 
 		// TODO : format data
 		try {

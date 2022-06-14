@@ -24,3 +24,7 @@ yarn-error.log
 ###> IDE ###
 .idea/
 ###< phpunit/phpunit ###
+
+###> Composer ###
+.php-version
+###< Composer ###
