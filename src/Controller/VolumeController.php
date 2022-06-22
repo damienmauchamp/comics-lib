@@ -8,7 +8,9 @@ use App\Repository\IssueRepository;
 use App\Repository\PublisherRepository;
 use App\Repository\VolumeRepository;
 use App\Service\APIService;
+use DateInterval;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\NoReturn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,9 +18,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 
 class VolumeController extends AbstractController {
+
+
+	/**
+	 * @todo remove GET
+	 */
 	#[NoReturn] #[Route('/volume/{id}/update', name: 'app_volume_update',
 		methods: ['GET', 'POST'])]
-	public function update(APIService          $api,
+	public function update(ManagerRegistry     $doctrine,
+						   APIService          $api,
 						   RequestStack        $requestStack,
 						   VolumeRepository    $volumeRepo,
 						   PublisherRepository $publisherRepo,
@@ -27,7 +35,8 @@ class VolumeController extends AbstractController {
 						   array               $params = [],
 						   array               $issues = [],
 						   int                 $id_force = null,
-						   int                 $id_start = null): JsonResponse {
+						   int                 $id_start = null,
+						   ?string             $interval = null): JsonResponse {
 
 		$force_update = $requestStack->getCurrentRequest()->get('force_update', true);
 
@@ -42,8 +51,12 @@ class VolumeController extends AbstractController {
 			$force_update = true;
 		}
 
+//		if()  PT1H30M
+
 		if($id_force && $id_force != $volume->getId() ||
-			$id_start && $volume->getId() && $id_start > $volume->getId()) {
+			$id_start && $volume->getId() && $id_start > $volume->getId() ||
+//			$interval && $volume->getDateUpdated() && $volume->getDateUpdated()->diff(new DateTime())->format('%R%a') < $interval) {
+			$interval && $volume->getDateUpdated() && $volume->getDateUpdated() > (new DateTime())->sub(new DateInterval($interval))) {
 			return new JsonResponse([
 				'status' => 'ok',
 				'message' => "No need to update",
@@ -146,9 +159,9 @@ class VolumeController extends AbstractController {
 
 			// checking the updated date
 			$updated = new DateTime($issueData['date_last_updated']);
-//			if($updated < $issue->getDateUpdated()) {
-//				continue;
-//			}
+			if($updated < $issue->getDateUpdated() && !$force_update) {
+				continue;
+			}
 
 			// updating the issue
 			$issue->setVolume($volume);
@@ -163,11 +176,12 @@ class VolumeController extends AbstractController {
 //			"https://comicvine.gamespot.com/issue/4000-{$issue->getIdc()}/"
 
 			// saving the issue
-			$issueRepo->add($issue, true);
+			$issueRepo->add($issue);
 //			$this->forward('App\Controller\IssueController::update', [
 //				'id' => $issueData['id'],
 //			]);
 		}
+		$doctrine->getManager()->flush();
 
 //		dd($issuesData, $volume);
 

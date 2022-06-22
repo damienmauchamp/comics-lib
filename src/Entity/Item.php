@@ -38,8 +38,17 @@ class Item {
 	#[ORM\Column(type: 'text')]
 	private $notes;
 
-	#[ORM\OneToMany(mappedBy: 'item', targetEntity: Issue::class)]
+	#[ORM\OneToMany(mappedBy: 'item', targetEntity: ItemIssue::class)]
 	private $issues;
+
+	#[ORM\Column(type: 'datetime')]
+	private $date_added;
+
+	#[ORM\Column(type: 'datetime')]
+	private $date_updated;
+
+	#[ORM\Column(type: 'datetime', nullable: true)]
+	private $date_ignored;
 
 	public function __construct() {
 		$this->issues = new ArrayCollection();
@@ -148,5 +157,44 @@ class Item {
 		$this->issues->removeElement($issue);
 
 		return $this;
+	}
+
+	public function getDateAdded(): ?\DateTimeInterface {
+		return $this->date_added;
+	}
+
+	public function setDateAdded(\DateTimeInterface $date_added): self {
+		$this->date_added = $date_added;
+
+		return $this;
+	}
+
+	public function getDateUpdated(): ?\DateTimeInterface {
+		return $this->date_updated;
+	}
+
+	public function setDateUpdated(\DateTimeInterface $date_updated): self {
+		$this->date_updated = $date_updated;
+
+		return $this;
+	}
+
+	public function getDateIgnored(): ?\DateTimeInterface {
+		return $this->date_ignored;
+	}
+
+	public function setDateIgnored(?\DateTimeInterface $date_ignored): self {
+		$this->date_ignored = $date_ignored;
+
+		return $this;
+	}
+
+
+	public function createImageName(string $ext = 'jpg'): string {
+		$unique_id = uniqid();
+		$collectionName = $this->getItemCollection()->getName() ?? '';
+		$name = preg_replace('/[^a-z\d]+/i', '-', "{$collectionName} {$this->getNumber()} {$this->getTitle()}");
+		$name = substr($name, 0, 90)."-$unique_id";
+		return "$name.{$ext}";
 	}
 }

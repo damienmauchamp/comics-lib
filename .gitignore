@@ -28,3 +28,7 @@ yarn-error.log
 ###> Composer ###
 .php-version
 ###< Composer ###
+
+###> Files ###
+public/images
+###< Files ###

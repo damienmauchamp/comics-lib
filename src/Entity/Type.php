@@ -28,6 +28,12 @@ class Type {
 		return $this->id;
 	}
 
+	public function setId(string $id): self {
+		$this->id = $id;
+
+		return $this;
+	}
+
 	public function getName(): ?string {
 		return $this->name;
 	}
@@ -39,13 +45,13 @@ class Type {
 	}
 
 	/**
-	 * @return ItemCollection<int, ItemCollection>
+	 * @return Collection<int, ItemCollection>
 	 */
 	public function getCollections(): Collection {
 		return $this->collections;
 	}
 
-	public function addCollection(Collection $collection): self {
+	public function addCollection(ItemCollection $collection): self {
 		if(!$this->collections->contains($collection)) {
 			$this->collections[] = $collection;
 			$collection->setType($this);
@@ -54,7 +60,7 @@ class Type {
 		return $this;
 	}
 
-	public function removeCollection(Collection $collection): self {
+	public function removeCollection(ItemCollection $collection): self {
 		if($this->collections->removeElement($collection)) {
 			// set the owning side to null (unless already changed)
 			if($collection->getType() === $this) {
