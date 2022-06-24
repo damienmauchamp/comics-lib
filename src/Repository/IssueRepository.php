@@ -14,30 +14,30 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Issue[]    findAll()
  * @method Issue[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class IssueRepository extends ServiceEntityRepository
-{
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Issue::class);
-    }
+class IssueRepository extends ServiceEntityRepository {
+	public function __construct(ManagerRegistry $registry) {
+		parent::__construct($registry, Issue::class);
+	}
 
-    public function add(Issue $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
+	public function add(Issue $entity, bool $flush = false): void {
+		$this->getEntityManager()->persist($entity);
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
+		if($flush) {
+			$this->getEntityManager()->flush();
+		}
+	}
 
-    public function remove(Issue $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
+	public function update(Issue $entity, bool $flush = false): void {
+		$this->add($entity, $flush);
+	}
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
+	public function remove(Issue $entity, bool $flush = false): void {
+		$this->getEntityManager()->remove($entity);
+
+		if($flush) {
+			$this->getEntityManager()->flush();
+		}
+	}
 
 //    /**
 //     * @return Issue[] Returns an array of Issue objects
