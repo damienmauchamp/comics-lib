@@ -11,6 +11,7 @@ use App\Service\APIService;
 use DateInterval;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\NoReturn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,6 +19,31 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 
 class VolumeController extends AbstractController {
+
+
+	/**
+	 * ADD
+	 * @todo remove GET
+	 */
+	#[NoReturn] #[Route('/volume/{id}/add', name: 'app_volume_add',
+		methods: ['GET', 'POST'])]
+	public function add(int     $id,
+						array   $params = [],
+						array   $issues = [],
+						int     $id_force = null,
+						int     $id_start = null,
+						?string $interval = null): JsonResponse {
+
+		$response = $this->forward('App\Controller\VolumeController::update', [
+			'id' => $id,
+			'params' => $params,
+			'issues' => $issues,
+			'id_force' => $id_force,
+			'id_start' => $id_start,
+			'interval' => $interval,
+		]);
+		return new JsonResponse(json_decode($response->getContent(), true));
+	}
 
 
 	/**
@@ -44,9 +70,14 @@ class VolumeController extends AbstractController {
 		// checking if the volume exists
 		$volume = $volumeRepo->findOneBy(['idc' => $id]);
 		if(empty($volume)) {
-			// if not, we create it
-			$volume = new Volume();
-			$volume->setDateAdded(new DateTime());
+			// if not, we return an error
+			return new JsonResponse([
+				'status' => 'error',
+				'message' => 'Volume not found',
+			]);
+//			// if not, we create it
+//			$volume = new Volume();
+//			$volume->setDateAdded(new DateTime());
 		}
 		else if($id_force && $id_force === $volume->getId() || $id_start && $id_start <= $volume->getId()) {
 			$force_update = true;

@@ -93,7 +93,7 @@ class ComicsLibraryController extends AbstractController {
 
 			// creating or updating volume
 			$params = $volume['disabled'] ? ['date_ignored' => new DateTime()] : [];
-			$response = $this->forward('App\Controller\VolumeController::update', [
+			$response = $this->forward('App\Controller\VolumeController::add', [
 				'id' => $volume['id_comicvine'],
 				'force_update' => false,
 				'params' => $params,
@@ -233,7 +233,7 @@ class ComicsLibraryController extends AbstractController {
 		}
 
 		// update volume
-		$response = $this->forward('App\Controller\VolumeController::update', [
+		$response = $this->forward('App\Controller\VolumeController::add', [
 			'id' => $issue['idc_volume'],
 //			'force_update' => true,
 			'interval' => 'P1D',
