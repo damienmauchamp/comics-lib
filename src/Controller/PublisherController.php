@@ -15,13 +15,28 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PublisherController extends AbstractController {
+	#[Route('/publisher/{id<\d+>}', name: 'app_publisher', methods: ['GET'])]
+	public function index(PublisherRepository $publisherRepository,
+						  int                 $id): Response {
+
+		$publisher = $publisherRepository->find($id);
+
+		if(!$publisher) {
+			throw $this->createNotFoundException('No publisher found for id '.$id);
+		}
+
+		dd($publisher);
+//		return $this->render('publisher/index.html.twig', [
+//			'publishers' => $publishers,
+//		]);
+	}
 
 	/**
 	 * @throws Exception
 	 * @todo make the route POST "/publisher/{id}"
 	 * @todo remove GET
 	 */
-	#[NoReturn] #[Route('/publisher/{id}/update', name: 'app_publisher_update',
+	#[NoReturn] #[Route('/publisher/{id<\d+>}/update', name: 'app_publisher_update',
 		methods: ['GET', 'POST'])]
 	public function update(APIService          $api,
 						   RequestStack        $requestStack,

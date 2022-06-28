@@ -107,7 +107,7 @@ class IssueController extends AbstractController {
 
 		$issue = $issueRepo->find($id);
 		if(empty($issue)) {
-			throw new Exception('Issue not found');
+			throw $this->createNotFoundException('No issue found for id '.$id);
 		}
 		return $issue;
 	}

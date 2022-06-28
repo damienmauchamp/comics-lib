@@ -14,30 +14,49 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Publisher[]    findAll()
  * @method Publisher[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PublisherRepository extends ServiceEntityRepository
-{
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Publisher::class);
-    }
+class PublisherRepository extends ServiceEntityRepository {
+	public function __construct(ManagerRegistry $registry) {
+		parent::__construct($registry, Publisher::class);
+	}
 
-    public function add(Publisher $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
+	public function add(Publisher $entity, bool $flush = false): void {
+		$this->getEntityManager()->persist($entity);
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
+		if($flush) {
+			$this->getEntityManager()->flush();
+		}
+	}
 
-    public function remove(Publisher $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
+	public function remove(Publisher $entity, bool $flush = false): void {
+		$this->getEntityManager()->remove($entity);
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
+		if($flush) {
+			$this->getEntityManager()->flush();
+		}
+	}
+
+	public function findByName(?string $name = '',
+							   ?int    $page = null,
+							   ?int    $limit = null,
+							   ?string $sort = 'name',
+							   ?string $order = 'ASC'): array {
+
+		$query = $this->createQueryBuilder('p')
+			->where('p.name LIKE :name')
+			->setParameter('name', '%'.$name.'%');
+
+		if($page !== null && $limit !== null) {
+			$query->setFirstResult(($page - 1) * $limit)
+				->setMaxResults($limit);
+		}
+
+		if($sort !== null) {
+			$query->orderBy('c.'.$sort, $order);
+		}
+
+		return $query->getQuery()
+			->getResult();
+	}
 
 //    /**
 //     * @return Publisher[] Returns an array of Publisher objects

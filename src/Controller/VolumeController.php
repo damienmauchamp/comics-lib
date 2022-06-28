@@ -25,7 +25,7 @@ class VolumeController extends AbstractController {
 	 * ADD
 	 * @todo remove GET
 	 */
-	#[NoReturn] #[Route('/volume/{id}/add', name: 'app_volume_add',
+	#[NoReturn] #[Route('/volume/{id<\d+>}/add', name: 'app_volume_add',
 		methods: ['GET', 'POST'])]
 	public function add(int     $id,
 						array   $params = [],
@@ -50,7 +50,7 @@ class VolumeController extends AbstractController {
 	 * ADD + UPDATE
 	 * @todo remove GET
 	 */
-	#[NoReturn] #[Route('/volume/{id}/update', name: 'app_volume_update',
+	#[NoReturn] #[Route('/volume/{id<\d+>}/update', name: 'app_volume_update',
 		methods: ['GET', 'POST'])]
 	public function update(ManagerRegistry     $doctrine,
 						   APIService          $api,

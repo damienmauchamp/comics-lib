@@ -33,13 +33,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ItemController extends AbstractController {
-//    #[Route('/item', name: 'app_item')]
-//    public function index(): Response
-//    {
-//        return $this->render('item/index.html.twig', [
-//            'controller_name' => 'ItemController',
-//        ]);
-//    }
+	#[Route('/item/{id<\d+>}', name: 'app_item')]
+	public function index(ItemRepository $itemRepository,
+						  int            $id): Response {
+
+		$item = $itemRepository->find($id);
+
+		if(!$item) {
+			throw $this->createNotFoundException('No item found for id '.$id);
+		}
+
+		dd($item);
+		
+		return $this->render('item/index.html.twig', [
+			'controller_name' => 'ItemController',
+		]);
+	}
 
 
 	/**

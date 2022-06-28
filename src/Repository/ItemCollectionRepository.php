@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Imprint;
 use App\Entity\ItemCollection;
+use App\Entity\Type;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -33,6 +35,55 @@ class ItemCollectionRepository extends ServiceEntityRepository {
 		if($flush) {
 			$this->getEntityManager()->flush();
 		}
+	}
+
+	public function findByAttributes(?string  $name = '',
+									 ?Type    $type = null,
+									 ?bool    $official = null,
+									 ?Imprint $imprint = null,
+									 ?int     $page = null,
+									 ?int     $limit = null,
+									 ?string  $order_by = 'name',
+									 string   $order = 'ASC'): array {
+		$query = $this->createQueryBuilder('c')
+			->where('c.name LIKE :name')
+			->setParameter('name', '%'.$name.'%');
+
+
+		if($type) {
+			$query->andWhere('c.type = :type')
+				->setParameter('type', $type);
+		}
+
+		if($official !== null) {
+			$query->andWhere('c.official = :official')
+				->setParameter('official', $official);
+		}
+
+		if($imprint) {
+			$query->andWhere('c.imprint = :imprint')
+				->setParameter('imprint', $imprint);
+		}
+
+		if($page !== null && $limit !== null) {
+			$query->setFirstResult(($page - 1) * $limit)
+				->setMaxResults($limit);
+		}
+
+		if($order_by !== null) {
+			$query->orderBy('c.'.$order_by, $order);
+		}
+
+		return $query->getQuery()
+			->getResult();
+	}
+
+	public function findByName(?string $name = ''): array {
+		return $this->createQueryBuilder('c')
+			->where('c.name LIKE :name')
+			->setParameter('name', '%'.$name.'%')
+			->getQuery()
+			->getResult();
 	}
 
 //    /**
