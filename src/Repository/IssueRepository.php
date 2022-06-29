@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Issue;
+use App\Entity\Volume;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +38,19 @@ class IssueRepository extends ServiceEntityRepository {
 		if($flush) {
 			$this->getEntityManager()->flush();
 		}
+	}
+
+	public function findByVolume(Volume $volume,
+								 bool   $read = false,
+								 string $sort = 'number', string $order = 'ASC'): array {
+		$query = $this->createQueryBuilder('i')
+			->where('i.volume = :volume')
+			->setParameter('volume', $volume)
+			->andWhere('i.date_read IS '.($read ? 'NOT' : '').' NULL')
+			->orderBy("i.{$sort}", $order);
+
+		return $query->getQuery()
+			->getResult();
 	}
 
 //    /**

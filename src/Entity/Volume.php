@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use App\Repository\IssueRepository;
 use App\Repository\VolumeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: VolumeRepository::class)]
@@ -37,6 +39,11 @@ class Volume {
 
 	#[ORM\OneToMany(mappedBy: 'volume', targetEntity: Issue::class)]
 	private $issues;
+
+	private ?Issue $next_to_read_issue = null;
+
+	private array $issues_read = [];
+	private int $number_of_issues_read = 0;
 
 	#[ORM\Column(type: 'datetime')]
 	private $date_added;
@@ -181,4 +188,49 @@ class Volume {
 
 		return $this;
 	}
+
+	/**
+	 * @return Issue|null
+	 */
+	public function getNextToreadissue(): ?Issue {
+		return $this->next_to_read_issue;
+	}
+
+	/**
+	 * @param Issue|null $next_to_read_issue
+	 */
+	public function setNextToreadissue(?Issue $next_to_read_issue): void {
+		$this->next_to_read_issue = $next_to_read_issue;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getIssuesRead(): array {
+		return $this->issues_read;
+	}
+
+	/**
+	 * @param array $issues_read
+	 */
+	public function setIssuesRead(array $issues_read): void {
+		$this->issues_read = $issues_read;
+		$this->number_of_issues_read = count($this->issues_read);
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getNumberOfIssuesRead(): int {
+		return $this->number_of_issues_read;
+	}
+
+	public function getLastReadIssue(): ?Issue {
+//		if(count($this->issues_read) > 0) {
+//			return $this->issues_read[count($this->issues_read) - 1];
+//		}
+		return $this->issues_read[0] ?? null;
+	}
+
+
 }

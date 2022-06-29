@@ -17,7 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Volume[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class VolumeRepository extends ServiceEntityRepository {
-	public function __construct(ManagerRegistry $registry) {
+	public function __construct(ManagerRegistry         $registry,
+								private IssueRepository $issueRepository) {
 		parent::__construct($registry, Volume::class);
 	}
 
@@ -88,6 +89,129 @@ class VolumeRepository extends ServiceEntityRepository {
 		return $query->getQuery()->getResult();
 
 
+	}
+
+	public function findNextToReadVolumes(bool    $started = null,
+										  bool    $ignored = false,
+										  ?int    $limit = null,
+										  string  $sort = 'last_read',
+										  ?string $order = 'DESC'): array {
+
+		$order_by = $sort === 'last_read' ? null : 'start_year';
+
+		// getting next to read volumes
+		$nextToReadVolumes = $this->findByAttributes(
+			null,
+			null,
+			null,
+			null,
+			null,
+			$ignored,
+			null,
+			$limit,
+			$order_by, $order);
+
+		// getting next to read issues of each volume
+		$volumes = [];
+		foreach($nextToReadVolumes as $volume) {
+
+			// checking if all the volume issues are read
+//			$allRead = true;
+			$issuesNotRead = $this->issueRepository->findByVolume($volume, false);
+			if(count($issuesNotRead) === 0) {
+				continue;
+			}
+
+			// setting the next to read issue
+			// todo : handle multiple issues not read between read ones
+			$volume->setNextToreadissue($issuesNotRead[0]);
+
+			// setting the read issues
+			$issuesRead = $this->issueRepository->findByVolume($volume, true, 'date_read', 'DESC');
+			$volume->setIssuesRead($issuesRead);
+
+			if($started && !count($issuesRead)) {
+				// if we only want started volumes and this volume has no read issues
+				continue;
+			}
+
+			if($started === false && count($issuesRead)) {
+				// if we only want not started volumes and this volume has read issues
+				continue;
+			}
+
+			// adding the volume to the list
+			$volumes[] = $volume;
+
+//			dd($volume, $volume->getLastReadIssue(), $issuesNotRead);
+		}
+
+		if($sort === 'last_read') {
+			usort($volumes, function (Volume $a, Volume $b) use ($started) {
+				if($started) {
+					return $b->getLastReadIssue()->getDateRead() <=> $a->getLastReadIssue()->getDateRead();
+				}
+				else if($started === false) {
+					return $b->getDateAdded() <=> $a->getDateAdded();
+				}
+
+				if($a->getLastReadIssue() === null && $b->getLastReadIssue() === null) {
+					return $b->getDateAdded() <=> $a->getDateAdded();
+				}
+
+				if($a->getLastReadIssue() === null) {
+					return 1;
+				}
+				else if($b->getLastReadIssue() === null) {
+					return -1;
+				}
+				return $b->getLastReadIssue()->getDateRead() <=> $a->getLastReadIssue()->getDateRead();
+			});
+		}
+
+		return $volumes;
+	}
+
+	public function findUpToDateVolumes(?int    $limit = null,
+										string  $sort = 'last_read',
+										?string $order = 'DESC'): array {
+
+		$order_by = $sort === 'last_read' ? null : 'start_year';
+
+		// getting next to read volumes
+		$upToReadVolumes = $this->findByAttributes(
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			$limit,
+			$order_by, $order);
+
+		$volumes = [];
+		foreach($upToReadVolumes as $volume) {
+
+			$issuesNotRead = $this->issueRepository->findByVolume($volume, false);
+			if(count($issuesNotRead) > 0) {
+				continue;
+			}
+
+			// setting the read issues
+			$issuesRead = $this->issueRepository->findByVolume($volume, true, 'date_read', 'DESC');
+			$volume->setIssuesRead($issuesRead);
+
+			$volumes[] = $volume;
+		}
+
+		if($sort === 'last_read') {
+			usort($volumes, function (Volume $a, Volume $b) {
+				return $b->getLastReadIssue()->getDateRead() <=> $a->getLastReadIssue()->getDateRead();
+			});
+		}
+
+		return $volumes;
 	}
 
 //    /**

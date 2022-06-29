@@ -88,7 +88,8 @@
 			"@auto-scripts"
 		],
 		"migration": "@php bin/console make:migration",
-		"migrate": "@php bin/console doctrine:migrations:migrate --no-interaction"
+		"migrate": "@php bin/console doctrine:migrations:migrate --no-interaction",
+		"dev": "symfony server:start"
 	},
 	"scripts-descriptions": {
 		"migration": "Create a new migration",
