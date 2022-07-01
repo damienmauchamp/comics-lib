@@ -26,7 +26,16 @@ class HomepageController extends AbstractController {
 
 		// todo: see ignored link (in twig)
 
-		dd($nextToReadVolumesStarted, $nextToReadVolumesNotStarted, $upToDateVolumes);
+		dd(
+			[
+				'$nextToReadVolumesStarted' => $nextToReadVolumesStarted,
+			],
+			[
+				'$nextToReadVolumesNotStarted' => $nextToReadVolumesNotStarted,
+			],
+			[
+				'$upToDateVolumes' => $upToDateVolumes,
+			]);
 
 		// todo: ITEMS
 

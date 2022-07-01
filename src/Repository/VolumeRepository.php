@@ -2,10 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\Issue;
 use App\Entity\Publisher;
 use App\Entity\Volume;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -122,13 +124,17 @@ class VolumeRepository extends ServiceEntityRepository {
 				continue;
 			}
 
-			// setting the next to read issue
-			// todo : handle multiple issues not read between read ones
-			$volume->setNextToreadissue($issuesNotRead[0]);
-
 			// setting the read issues
 			$issuesRead = $this->issueRepository->findByVolume($volume, true, 'date_read', 'DESC');
 			$volume->setIssuesRead($issuesRead);
+
+			// setting the next to read issue
+//			$issueNextToRead = $issuesNotRead[0];
+			// handling multiple issues not read between read ones
+			$issueLastRead = $volume->getLastReadIssue();
+			$issueNextToRead = $this->issueRepository->findVolumeNextToReadIssue($volume, $issueLastRead);
+			$volume->setLastreadissue($issueLastRead);
+			$volume->setNextToreadissue($issueNextToRead);
 
 			if($started && !count($issuesRead)) {
 				// if we only want started volumes and this volume has no read issues

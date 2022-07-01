@@ -40,6 +40,7 @@ class Volume {
 	#[ORM\OneToMany(mappedBy: 'volume', targetEntity: Issue::class)]
 	private $issues;
 
+	private ?Issue $last_read_issue = null;
 	private ?Issue $next_to_read_issue = null;
 
 	private array $issues_read = [];
@@ -225,11 +226,21 @@ class Volume {
 		return $this->number_of_issues_read;
 	}
 
+	/**
+	 * @return Issue|null
+	 */
 	public function getLastReadIssue(): ?Issue {
-//		if(count($this->issues_read) > 0) {
-//			return $this->issues_read[count($this->issues_read) - 1];
-//		}
+		if($this->last_read_issue) {
+			return $this->last_read_issue;
+		}
 		return $this->issues_read[0] ?? null;
+	}
+
+	/**
+	 * @param Issue|null $last_read_issue
+	 */
+	public function setLastReadIssue(?Issue $last_read_issue): void {
+		$this->last_read_issue = $last_read_issue;
 	}
 
 

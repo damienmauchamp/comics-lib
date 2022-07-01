@@ -5,6 +5,10 @@ namespace App\Repository;
 use App\Entity\Issue;
 use App\Entity\Volume;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,6 +41,38 @@ class IssueRepository extends ServiceEntityRepository {
 
 		if($flush) {
 			$this->getEntityManager()->flush();
+		}
+	}
+
+	/**
+	 */
+	public function findVolumeNextToReadIssue(Volume $volume,
+											  ?Issue $lastReadIssue = null): ?Issue {
+
+		if($lastReadIssue === null) {
+			$lastReadIssue = $volume->getLastReadIssue();
+		}
+
+		if($lastReadIssue === null) {
+			return $this->findByVolume($volume, false)[0] ?? null;
+		}
+
+		$query = $this->createQueryBuilder('i')
+			->where('i.volume = :volume')
+			->andWhere('i.number > :number')
+			->andWhere('i.date_read is null')
+			->setParameter('volume', $volume)
+			->setParameter('number', $lastReadIssue->getNumber())
+			->orderBy('i.number', 'ASC')
+			->setMaxResults(1);
+
+		$result = $query->getQuery();
+		try {
+			return $result->getSingleResult();
+		} catch(NoResultException $e) {
+			return $this->findByVolume($volume, false)[0];
+		} catch(NonUniqueResultException $e) {
+			return $result->getResult()[0];
 		}
 	}
 
