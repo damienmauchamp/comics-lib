@@ -258,5 +258,49 @@ class VolumeController extends AbstractController {
 
 	}
 
+
+	#[Route('/volume/{id<\d+>}/issue/{n}/read', name: 'app_volume_read_issue_by_number',
+		methods: ['GET', 'POST'])]
+	public function readIssue(ManagerRegistry  $doctrine,
+							  VolumeRepository $volumeRepo,
+							  IssueRepository  $issueRepo,
+							  int              $id,
+							  string           $n,
+							  bool             $read = true
+	): JsonResponse {
+
+		// getting the volume from the request
+		$volume = $volumeRepo->findOneBy(['id' => $id]);
+		if(!$volume) {
+			return new JsonResponse([
+				'status' => 'error',
+				'message' => "Couldn't find the volume",
+			]);
+		}
+
+		// checking if the issue exists
+		$issue = $issueRepo->findOneBy(['volume' => $volume, 'number' => $n]);
+
+		// updating the issue
+		/** @var JsonResponse $response */
+		$response = $this->forward('App\Controller\IssueController::read', [
+			'id' => $issue->getId(),
+			'volume' => $volume,
+			'read' => $read,
+		]);
+		return $response;
+	}
+
+
+	#[Route('/volume/{id<\d+>}/issue/{n}/unread', name: 'app_volume_read_issue_by_number',
+		methods: ['GET', 'POST'])]
+	public function unreadIssue(ManagerRegistry  $doctrine,
+								VolumeRepository $volumeRepo,
+								IssueRepository  $issueRepo,
+								int              $id,
+								string           $n
+	): JsonResponse {
+		return $this->readIssue($doctrine, $volumeRepo, $issueRepo, $id, $n, false);
+	}
 //	public function add()
 }

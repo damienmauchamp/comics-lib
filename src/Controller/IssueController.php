@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Issue;
+use App\Entity\Item;
 use App\Entity\Volume;
 use App\Repository\IssueRepository;
 use DateTime;
@@ -34,6 +35,8 @@ class IssueController extends AbstractController {
 	public function read(IssueRepository $issueRepo,
 						 RequestStack    $requestStack,
 						 int             $id,
+						 ?Volume         $volume = null,
+						 ?Item           $item = null,
 						 bool            $read = true): JsonResponse {
 
 		// todo : exception if not found
@@ -56,10 +59,39 @@ class IssueController extends AbstractController {
 		$issue->setDateRead($datetime);
 		$issueRepo->update($issue, true);
 
-		// todo : json response
-		dd($issue);
-		return new JsonResponse([
+		if($item) {
+			// todo
+		}
+		else if($volume) {
+			// setting the read issues
+			$volume = $issue->getVolume();
+			$volume->setIssuesRead($issueRepo->findByVolume($volume, true, 'date_read', 'DESC'));
+		}
 
+		// getting the next issue
+		$nextIssue = $item ?
+			$issueRepo->findItemNextToReadIssue($item, $issue) :
+			$issueRepo->findVolumeNextToReadIssue($volume, $issue);
+
+		//
+		return new JsonResponse([
+			'status' => 'success',
+			'data' => [
+				'issue' => [
+					'id' => $issue->getId(),
+					'name' => $issue->getName(),
+					'number' => $issue->getNumber(),
+					'image' => $issue->getImage(),
+					'date_read' => $issue->getDateRead(),
+				],
+				'next' => [
+					'id' => $nextIssue->getId(),
+					'name' => $nextIssue->getName(),
+					'number' => $nextIssue->getNumber(),
+					'image' => $nextIssue->getImage(),
+					'date_read' => $nextIssue->getDateRead(),
+				],
+			],
 		]);
 	}
 
@@ -67,8 +99,10 @@ class IssueController extends AbstractController {
 		methods: ['GET', 'POST'])]
 	public function unread(IssueRepository $issueRepo,
 						   RequestStack    $requestStack,
-						   int             $id): JsonResponse {
-		return $this->read($issueRepo, $requestStack, $id, false);
+						   int             $id,
+						   ?Volume         $volume = null,
+						   ?Item           $item = null): JsonResponse {
+		return $this->read($issueRepo, $requestStack, $id, $volume, $item, false);
 	}
 
 	#[Route('/issue/{id<\d+>}/ignore', name: 'app_issue_ignore',

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Issue;
+use App\Entity\Item;
 use App\Entity\Volume;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -49,7 +50,7 @@ class IssueRepository extends ServiceEntityRepository {
 	public function findVolumeNextToReadIssue(Volume $volume,
 											  ?Issue $lastReadIssue = null): ?Issue {
 
-		if($lastReadIssue === null) {
+		if($lastReadIssue === null || $lastReadIssue->getDateRead() === null) {
 			$lastReadIssue = $volume->getLastReadIssue();
 		}
 
@@ -74,6 +75,12 @@ class IssueRepository extends ServiceEntityRepository {
 		} catch(NonUniqueResultException $e) {
 			return $result->getResult()[0];
 		}
+	}
+
+	public function findItemNextToReadIssue(Item   $item,
+											?Issue $lastReadIssue = null): ?Issue {
+		// todo
+		return null;
 	}
 
 	public function findByVolume(Volume $volume,
