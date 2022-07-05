@@ -2,7 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Issue;
 use App\Entity\Item;
+use App\Entity\ItemIssue;
+use App\Entity\Volume;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -89,6 +92,23 @@ class ItemRepository extends ServiceEntityRepository {
 		if($order_by !== null) {
 			$query->orderBy('i.'.$order_by, $order);
 		}
+
+		return $query->getQuery()->getResult();
+	}
+
+	public function findByVolume(Volume $volume): array {
+
+		$volume_query = $this->getEntityManager()->createQueryBuilder()
+			->select('iii.id')
+			->from(Issue::class, 'iii')
+			->where('iii.volume = :volume');
+
+		$query = $this->createQueryBuilder('i');
+		$query
+			->select('i')
+			->innerJoin(ItemIssue::class, 'ii', 'WITH', 'ii.item = i.id')
+			->where($query->expr()->in('ii.issue', $volume_query->getDQL()))
+			->setParameter('volume', $volume->getId());
 
 		return $query->getQuery()->getResult();
 	}

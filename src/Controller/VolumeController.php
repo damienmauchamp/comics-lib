@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Issue;
+use App\Entity\ItemIssue;
 use App\Entity\Volume;
 use App\Repository\IssueRepository;
+use App\Repository\ItemCollectionRepository;
+use App\Repository\ItemRepository;
 use App\Repository\PublisherRepository;
 use App\Repository\VolumeRepository;
 use App\Service\APIService;
@@ -20,29 +23,65 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class VolumeController extends AbstractController {
 
+	#[NoReturn] #[Route('/volume/{id<\d+>}', name: 'app_volume', methods: ['GET'])]
+	public function index(VolumeRepository $volumeRepo,
+						  ItemRepository   $itemRepo,
+						  int              $id): JsonResponse {
+
+		// page volume
+		$volume = $volumeRepo->find($id);
+		if(empty($volume)) {
+			// if not, we return an error
+			return new JsonResponse([
+				'status' => 'error',
+				'message' => 'Volume not found',
+			]);
+		}
+
+		// getting publisher
+		$publisher = $volume->getPublisher();
+
+		// getting issues list
+		$issues = $volume->getIssues()->getValues();
+
+		// getting items list where the volume appears
+		$items = $itemRepo->findByVolume($volume);
+
+//		// links between issues and items
+//		$itemsIssues = [];
+//		foreach($issues as $issue) {
+//			$itemsIssues = array_merge($itemsIssues, $issue->getItems()->getValues());
+//		}
+
+		dd($volume, $publisher, $issues, $items);
+//		return $this->render('volume/index.html.twig', [
+//			'controller_name' => 'VolumeController',
+//		]);
+	}
 
 	/**
 	 * ADD
 	 * @todo remove GET
 	 */
-	#[NoReturn] #[Route('/volume/{id<\d+>}/add', name: 'app_volume_add',
+	#[NoReturn] #[Route('/volume/{idc<\d+>}/add', name: 'app_volume_add',
 		methods: ['GET', 'POST'])]
-	public function add(int     $id,
+	public function add(int     $idc,
 						array   $params = [],
 						array   $issues = [],
 						int     $id_force = null,
 						int     $id_start = null,
 						?string $interval = null): JsonResponse {
 
+		/** @var JsonResponse $response */
 		$response = $this->forward('App\Controller\VolumeController::update', [
-			'id' => $id,
+			'id' => $idc,
 			'params' => $params,
 			'issues' => $issues,
 			'id_force' => $id_force,
 			'id_start' => $id_start,
 			'interval' => $interval,
 		]);
-		return new JsonResponse(json_decode($response->getContent(), true));
+		return $response;
 	}
 
 
@@ -50,7 +89,7 @@ class VolumeController extends AbstractController {
 	 * ADD + UPDATE
 	 * @todo remove GET
 	 */
-	#[NoReturn] #[Route('/volume/{id<\d+>}/update', name: 'app_volume_update',
+	#[NoReturn] #[Route('/volume/{idc<\d+>}/update', name: 'app_volume_update',
 		methods: ['GET', 'POST'])]
 	public function update(ManagerRegistry     $doctrine,
 						   APIService          $api,
@@ -58,7 +97,7 @@ class VolumeController extends AbstractController {
 						   VolumeRepository    $volumeRepo,
 						   PublisherRepository $publisherRepo,
 						   IssueRepository     $issueRepo,
-						   int                 $id,
+						   int                 $idc,
 						   array               $params = [],
 						   array               $issues = [],
 						   int                 $id_force = null,
@@ -68,7 +107,7 @@ class VolumeController extends AbstractController {
 		$force_update = $requestStack->getCurrentRequest()->get('force_update', true);
 
 		// checking if the volume exists
-		$volume = $volumeRepo->findOneBy(['idc' => $id]);
+		$volume = $volumeRepo->findOneBy(['idc' => $idc]);
 		if(empty($volume)) {
 			// if not, we return an error
 			return new JsonResponse([
@@ -98,7 +137,7 @@ class VolumeController extends AbstractController {
 		}
 
 		// getting the data from the request
-		$response = $api->volume($id);
+		$response = $api->volume($idc);
 		if($response['error']) {
 			return new JsonResponse([
 				'status' => 'error',
@@ -161,7 +200,7 @@ class VolumeController extends AbstractController {
 		$volumeRepo->add($volume, true);
 
 		// getting the issues from the request
-		$issuesResponse = $api->volumeIssues($id);
+		$issuesResponse = $api->volumeIssues($idc);
 		if($issuesResponse['error']) {
 			return new JsonResponse([
 				'status' => 'error',
@@ -302,5 +341,49 @@ class VolumeController extends AbstractController {
 	): JsonResponse {
 		return $this->readIssue($doctrine, $volumeRepo, $issueRepo, $id, $n, false);
 	}
-//	public function add()
+
+
+	#[Route('/volume/{id<\d+>}/issue/{n}/ignore', name: 'app_volume_ignore_issue_by_number',
+		methods: ['GET', 'POST'])]
+	public function ignoreIssue(ManagerRegistry  $doctrine,
+								VolumeRepository $volumeRepo,
+								IssueRepository  $issueRepo,
+								int              $id,
+								string           $n,
+								bool             $ignore = true
+	): JsonResponse {
+
+		// getting the volume from the request
+		$volume = $volumeRepo->findOneBy(['id' => $id]);
+		if(!$volume) {
+			return new JsonResponse([
+				'status' => 'error',
+				'message' => "Couldn't find the volume",
+			]);
+		}
+
+		// checking if the issue exists
+		$issue = $issueRepo->findOneBy(['volume' => $volume, 'number' => $n]);
+
+		// updating the issue
+		/** @var JsonResponse $response */
+		$response = $this->forward('App\Controller\IssueController::ignore', [
+			'id' => $issue->getId(),
+			'volume' => $volume,
+			'ignore' => $ignore,
+		]);
+		return $response;
+	}
+
+
+	#[Route('/volume/{id<\d+>}/issue/{n}/unignore', name: 'app_volume_ignore_issue_by_number',
+		methods: ['GET', 'POST'])]
+	public function unignoreIssue(ManagerRegistry  $doctrine,
+								  VolumeRepository $volumeRepo,
+								  IssueRepository  $issueRepo,
+								  int              $id,
+								  string           $n
+	): JsonResponse {
+		return $this->ignoreIssue($doctrine, $volumeRepo, $issueRepo, $id, $n, false);
+	}
 }

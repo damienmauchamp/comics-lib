@@ -31,7 +31,7 @@ class Volume {
 	#[ORM\Column(type: 'integer')]
 	private $number_issues;
 
-	#[ORM\ManyToOne(targetEntity: Publisher::class, inversedBy: 'volumes')]
+	#[ORM\ManyToOne(targetEntity: Publisher::class, fetch: 'EAGER', inversedBy: 'volumes')]
 	private $publisher;
 
 	#[ORM\Column(type: 'integer', nullable: true)]
