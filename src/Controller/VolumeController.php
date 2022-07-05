@@ -17,16 +17,17 @@ use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\NoReturn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 
 class VolumeController extends AbstractController {
 
-	#[NoReturn] #[Route('/volume/{id<\d+>}', name: 'app_volume', methods: ['GET'])]
+	#[Route('/volume/{id<\d+>}', name: 'app_volume', methods: ['GET'])]
 	public function index(VolumeRepository $volumeRepo,
 						  ItemRepository   $itemRepo,
-						  int              $id): JsonResponse {
+						  int              $id): Response {
 
 		// page volume
 		$volume = $volumeRepo->find($id);
@@ -53,10 +54,13 @@ class VolumeController extends AbstractController {
 //			$itemsIssues = array_merge($itemsIssues, $issue->getItems()->getValues());
 //		}
 
-		dd($volume, $publisher, $issues, $items);
-//		return $this->render('volume/index.html.twig', [
-//			'controller_name' => 'VolumeController',
-//		]);
+//		dd($volume, $publisher, $issues, $items);
+		return $this->render('volume/index.html.twig', [
+			'volume' => $volume,
+			'publisher' => $publisher,
+			'issues' => $issues,
+			'items' => $items,
+		]);
 	}
 
 	/**

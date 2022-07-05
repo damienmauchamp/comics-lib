@@ -6,6 +6,8 @@ use App\Entity\Issue;
 use App\Entity\Item;
 use App\Entity\Volume;
 use App\Repository\IssueRepository;
+use App\Repository\ItemRepository;
+use App\Repository\VolumeRepository;
 use DateTime;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,14 +18,41 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IssueController extends AbstractController {
 	#[Route('/issue/{id<\d+>}', name: 'app_issue')]
-	public function index(IssueRepository $issueRepo,
-						  int             $id): Response {
+	public function index(IssueRepository  $issueRepo,
+						  VolumeRepository $volumeRepo,
+						  ItemRepository   $itemRepo,
+						  int              $id): Response {
 
-		// todo : exception if not found
-		$issue = $this->get($id, $issueRepo);
+//		// todo : exception if not found
+//		$issue = $this->get($id, $issueRepo);
+		$issue = $issueRepo->find($id);
+		if(empty($issue)) {
+			// if not, we return an error
+			return new JsonResponse([
+				'status' => 'error',
+				'message' => 'Issue not found',
+			]);
+		}
+
+		// getting volume
+		$volume = $volumeRepo->findOneBy(['id' => $issue->getVolume()->getId()]);
+
+		// getting publisher
+		$publisher = $volume->getPublisher();
+
+		// getting all issues of the volume
+		$issues = $volume->getIssues()->getValues();
+
+		// getting all items where the issue appears
+		$itemIssues = $issue->getItems()->getValues();
+		$items = [];
+		foreach($itemIssues as $itemIssue) {
+			$item = $itemIssue->getItem();
+			$items[] = $itemRepo->findOneBy(['id' => $item->getId()]);
+		}
 
 		// todo : render issue
-		dd($issue);
+		dd($issue, $volume, $publisher, $issues, $itemIssues, $items);
 
 		return $this->render('issue/index.html.twig', [
 			'controller_name' => 'IssueController',

@@ -25,22 +25,21 @@ class HomepageController extends AbstractController {
 		$upToDateVolumes = $volumeRepository->findUpToDateVolumes();
 
 		// todo: see ignored link (in twig)
-
-		dd(
-			[
-				'$nextToReadVolumesStarted' => $nextToReadVolumesStarted,
-			],
-			[
-				'$nextToReadVolumesNotStarted' => $nextToReadVolumesNotStarted,
-			],
-			[
-				'$upToDateVolumes' => $upToDateVolumes,
-			]);
+//		dd($nextToReadVolumesStarted, $nextToReadVolumesNotStarted, $upToDateVolumes);
 
 		// todo: ITEMS
 
 		return $this->render('homepage/index.html.twig', [
-			'controller_name' => 'HomepageController',
+			'volumes' => [
+				'nextToReadStarted' => $nextToReadVolumesStarted,
+				'nextToReadNotStarted' => $nextToReadVolumesNotStarted,
+				'upToDate' => $upToDateVolumes,
+			],
+			'items' => [
+				'nextToReadStarted' => [],
+				'nextToReadNotStarted' => [],
+				'upToDate' => [],
+			],
 		]);
 	}
 }

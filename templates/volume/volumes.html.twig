@@ -1,0 +1,5 @@
+<ul>
+	{% for volume in volumes %}
+		{% include 'volume/volume.html.twig' with {'volume':volume} %}
+	{% endfor %}
+</ul>
