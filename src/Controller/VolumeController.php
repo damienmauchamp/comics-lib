@@ -26,6 +26,7 @@ class VolumeController extends AbstractController {
 
 	#[Route('/volume/{id<\d+>}', name: 'app_volume', methods: ['GET'])]
 	public function index(VolumeRepository $volumeRepo,
+						  IssueRepository  $issueRepo,
 						  ItemRepository   $itemRepo,
 						  int              $id): Response {
 
@@ -47,6 +48,10 @@ class VolumeController extends AbstractController {
 
 		// getting items list where the volume appears
 		$items = $itemRepo->findByVolume($volume);
+
+		$volume->setIssuesProgress($issueRepo);
+
+//		dd($volume);
 
 //		// links between issues and items
 //		$itemsIssues = [];
@@ -330,6 +335,7 @@ class VolumeController extends AbstractController {
 			'id' => $issue->getId(),
 			'volume' => $volume,
 			'read' => $read,
+			'forward' => 'volume'
 		]);
 		return $response;
 	}

@@ -4,6 +4,7 @@
 
 {% block body %}
 
+	{# info #}
 	<h1>{{ volume.name }} ({{ volume.id }})</h1>
 	<img src="{{ volume.image }}" alt="{{ volume.name }}" style="height:100px;"/>
 	<a href="{{ path('app_volume_update', { 'idc': volume.idc }) }}" target="_blank">UPDATE</a>
@@ -12,6 +13,20 @@
 		<li>{{ volume.name }}</li>
 		<li>{{ volume.description }}</li>
 	</ul>
+
+	{# next to read #}
+	{% if volume.getNextToreadissue() == null %}
+
+		{#  nothing #}
+
+		<h2>Up to date</h2>
+
+	{% else %}
+
+		<h2>Next to read</h2>
+		{% include 'volume/volume.html.twig' with {volume:volume, display: 'PROGRESS'} %}
+
+	{% endif %}
 
 	<h2>Publisher</h2>
 	<ul>

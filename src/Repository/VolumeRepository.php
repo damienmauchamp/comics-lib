@@ -124,17 +124,9 @@ class VolumeRepository extends ServiceEntityRepository {
 				continue;
 			}
 
-			// setting the read issues
-			$issuesRead = $this->issueRepository->findByVolume($volume, true, 'date_read', 'DESC');
-			$volume->setIssuesRead($issuesRead);
-
-			// setting the next to read issue
-//			$issueNextToRead = $issuesNotRead[0];
-			// handling multiple issues not read between read ones
-			$issueLastRead = $volume->getLastReadIssue();
-			$issueNextToRead = $this->issueRepository->findVolumeNextToReadIssue($volume, $issueLastRead);
-			$volume->setLastreadissue($issueLastRead);
-			$volume->setNextToreadissue($issueNextToRead);
+//			// setting the read issues
+			$volume->setIssuesProgress($this->issueRepository);
+			$issuesRead = $volume->getIssuesRead();
 
 			if($started && !count($issuesRead)) {
 				// if we only want started volumes and this volume has no read issues

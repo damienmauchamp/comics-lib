@@ -1,6 +1,19 @@
-<li>
-	{#    {{ dump((volume)) }} #}
-	{{ volume.id }}
-	{{ volume.name }}
-	<img src="{{ volume.image }}" alt="{{ volume.name }}" style="height:20px;" loading="lazy"/>
-</li>
+{# {{ display=  }} #}
+{# {% set displat %} #}
+
+<div class="volume" data-id="{{ volume.id }}">
+
+	<div class="volume-img">
+
+		<a href="{{ path('app_volume', {id:volume.id}) }}">
+			{{ include('volume/elements/image.html.twig', {display:display,volume:volume}) }}
+		</a>
+
+		<div class="progress"></div>
+	</div>
+
+	<div class="volume-details">
+		{{ include('volume/elements/details.html.twig', {display:display,volume:volume}) }}
+	</div>
+	{{ dump((volume)) }}
+</div>

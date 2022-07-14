@@ -8,12 +8,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomepageController extends AbstractController {
-	#[Route('/homepage', name: 'app_homepage')]
+	#[Route('/homepage', name: 'home')]
 	public function index(VolumeRepository $volumeRepository): Response {
 
 		// VOLUMES
 		// getting next to read issues (volumes with only next to read as attribute, issues: [])
 //		$nextToReadVolumesAll = $volumeRepository->findNextToReadVolumes();
+
 
 		// started section
 		$nextToReadVolumesStarted = $volumeRepository->findNextToReadVolumes(true);

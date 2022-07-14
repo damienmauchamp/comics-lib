@@ -1,5 +1,9 @@
-<ul>
-	{% for volume in volumes %}
-		{% include 'volume/volume.html.twig' with {'volume':volume} %}
-	{% endfor %}
-</ul>
+<section id="{{ section.id }}" class="volumes">
+	<h2>{{ section.title }} ({{ volumes|length }})</h2>
+
+	<div class="volumes-list">
+		{% for volume in volumes %}
+			{% include 'volume/volume.html.twig' with {volume:volume, display: display} %}
+		{% endfor %}
+	</div>
+</section>

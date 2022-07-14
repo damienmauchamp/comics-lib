@@ -1,0 +1,36 @@
+{% block details %}
+
+	{% set name = volume.name %}
+	{% set button = false %}
+
+	{% if display|default('VOLUME') is same as 'VOLUME' or volume.getNextToreadissue() == null %}
+
+		{# nothing #}
+
+	{% elseif display is same as 'NEXT_TO_READ' or display is same as 'PROGRESS' %}
+
+		{% set name = volume.name ~ ' #' ~ volume.getNextToreadissue().number %}
+		{% set button = true %}
+
+	{% endif %}
+
+	<div class="title">
+		<h3>
+			<a href="{{ path('app_volume', {id:volume.id}) }}">
+				{{ name }}
+			</a>
+		</h3>
+
+		{% if button %}
+			<a href="{{ path('app_issue_read', { 'id': volume.getNextToreadissue().id }) }}" class="btn-read">✔READ</a>
+		{% endif %}
+
+	</div>
+
+	{% if display is not same as 'PROGRESS' %}
+		<span class="remaining"
+				data-read="{{ volume.getNumberOfIssuesRead() }}"
+				data-total="{{ volume.getNumberIssues() }}">{{ volume.getRemainingIssuesToString(1) }}</span>
+	{% endif %}
+
+{% endblock %}

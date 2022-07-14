@@ -60,11 +60,15 @@ class IssueRepository extends ServiceEntityRepository {
 
 		$query = $this->createQueryBuilder('i')
 			->where('i.volume = :volume')
-			->andWhere('i.number > :number')
+//			->andWhere('i.number > :number')
+//			->andWhere('cast(i.number as date_released) > :number')
+			->andWhere('i.date_released > :date_released')
 			->andWhere('i.date_read is null')
 			->setParameter('volume', $volume)
-			->setParameter('number', $lastReadIssue->getNumber())
-			->orderBy('i.number', 'ASC')
+//			->setParameter('number', (int)$lastReadIssue->getNumber())
+			->setParameter('date_released', $lastReadIssue->getDateReleased())
+//			->orderBy('i.number', 'ASC')
+			->orderBy('i.date_released', 'ASC')
 			->setMaxResults(1);
 
 		$result = $query->getQuery();

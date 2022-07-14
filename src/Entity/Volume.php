@@ -200,7 +200,7 @@ class Volume {
 	/**
 	 * @param Issue|null $next_to_read_issue
 	 */
-	public function setNextToreadissue(?Issue $next_to_read_issue): void {
+	public function setNextToReadIssue(?Issue $next_to_read_issue): void {
 		$this->next_to_read_issue = $next_to_read_issue;
 	}
 
@@ -243,5 +243,23 @@ class Volume {
 		$this->last_read_issue = $last_read_issue;
 	}
 
+	public function getRemainingIssues(int $sub = 0): int {
+		return $this->number_issues - $this->number_of_issues_read - $sub;
+	}
+
+	public function getRemainingIssuesToString(int $sub = 0): string {
+		$count = $this->getRemainingIssues($sub);
+		return $count > 0 ? ($sub ? "+{$count} more" : "{$count} left") : '';
+	}
+
+	public function setIssuesProgress(IssueRepository $issueRepo): void {
+		$issuesRead = $issueRepo->findByVolume($this, true, 'date_read', 'DESC');
+		$this->setIssuesRead($issuesRead);
+
+		$issueLastRead = $this->getLastReadIssue();
+		$issueNextToRead = $issueRepo->findVolumeNextToReadIssue($this, $issueLastRead);
+		$this->setLastreadissue($issueLastRead);
+		$this->setNextToReadIssue($issueNextToRead);
+	}
 
 }

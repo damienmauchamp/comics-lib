@@ -14,7 +14,15 @@
 	{% endblock %}
 </head>
 <body>
-<nav></nav>
+
+<nav>
+	<ul>
+		<li><a href="{{ path('home') }}">Home</a></li>
+		{#        <li><a href="{{ path('about') }}">About</a></li> #}
+		{#        <li><a href="{{ path('contact') }}">Contact</a></li> #}
+	</ul>
+</nav>
+
 {% block body %}{% endblock %}
 </body>
 </html>

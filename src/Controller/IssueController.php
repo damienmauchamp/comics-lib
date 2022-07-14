@@ -66,10 +66,15 @@ class IssueController extends AbstractController {
 						 int             $id,
 						 ?Volume         $volume = null,
 						 ?Item           $item = null,
-						 bool            $read = true): JsonResponse {
+						 bool            $read = true,
+						 ?string         $forward = null): JsonResponse {
 
 		// todo : exception if not found
 		$issue = $this->get($id, $issueRepo);
+
+		if($forward !== 'item') {
+			$item = null;
+		}
 
 		// getting the date
 		if($read) {
@@ -102,6 +107,8 @@ class IssueController extends AbstractController {
 			$issueRepo->findItemNextToReadIssue($item, $issue) :
 			$issueRepo->findVolumeNextToReadIssue($volume, $issue);
 
+//		dd($nextIssue, $item, $volume, $issue);
+
 		//
 		return new JsonResponse([
 			'status' => 'success',
@@ -119,6 +126,10 @@ class IssueController extends AbstractController {
 					'number' => $nextIssue->getNumber(),
 					'image' => $nextIssue->getImage(),
 					'date_read' => $nextIssue->getDateRead(),
+					'html' => 'todo',
+//					'html' => $this->render('issue/next.html.twig', [
+//						'issue' => $nextIssue,
+//					])->getContent(),
 				],
 			],
 		]);

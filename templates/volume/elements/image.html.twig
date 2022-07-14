@@ -1,0 +1,21 @@
+{% block image %}
+
+	{% set src = volume.image %}
+	{% set alt = volume.name %}
+
+	{% if display|default('VOLUME') is same as 'VOLUME' or volume.getNextToreadissue() == null %}
+
+		{# nothing #}
+
+	{% elseif display in ['NEXT_TO_READ', 'PROGRESS'] %}
+
+		{% set src = volume.getNextToreadissue().image %}
+		{% set alt = volume.getNextToreadissue().name %}
+
+	{% endif %}
+
+	<img src="{{ src }}" alt="{{ alt }}"
+			style="height:50px;"
+			loading="lazy"/>
+
+{% endblock %}
