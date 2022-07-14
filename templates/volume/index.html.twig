@@ -24,7 +24,9 @@
 	{% else %}
 
 		<h2>Next to read</h2>
-		{% include 'volume/volume.html.twig' with {volume:volume, display: 'PROGRESS'} %}
+		<div {{ stimulus_controller('volume') }}>
+			{% include 'volume/volume.html.twig' with {volume:volume, display: 'PROGRESS'} %}
+		</div>
 
 	{% endif %}
 

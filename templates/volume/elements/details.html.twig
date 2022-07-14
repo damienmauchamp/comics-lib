@@ -9,7 +9,8 @@
 
 	{% elseif display is same as 'NEXT_TO_READ' or display is same as 'PROGRESS' %}
 
-		{% set name = volume.name ~ ' #' ~ volume.getNextToreadissue().number %}
+		{% set name = volume.getNextToreadissue().getIssueName() %}
+		{#        {% set name = volume.name ~ ' #' ~ volume.getNextToreadissue().number %} #}
 		{% set button = true %}
 
 	{% endif %}
@@ -22,7 +23,8 @@
 		</h3>
 
 		{% if button %}
-			<a href="{{ path('app_issue_read', { 'id': volume.getNextToreadissue().id }) }}" class="btn-read">✔READ</a>
+			{#            <a href="{{ path('app_issue_read', { 'id': volume.getNextToreadissue().id }) }}" class="btn-read">✔READ</a> #}
+			<a href="#" class="btn-read" {{ stimulus_action('volume', 'read') }} data-volume-id="{{ volume.id }}">✔</a>
 		{% endif %}
 
 	</div>

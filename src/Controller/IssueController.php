@@ -96,7 +96,8 @@ class IssueController extends AbstractController {
 		if($item) {
 			// todo
 		}
-		else if($volume) {
+//		else if($volume) {
+		else {
 			// setting the read issues
 			$volume = $issue->getVolume();
 			$volume->setIssuesRead($issueRepo->findByVolume($volume, true, 'date_read', 'DESC'));
@@ -106,6 +107,30 @@ class IssueController extends AbstractController {
 		$nextIssue = $item ?
 			$issueRepo->findItemNextToReadIssue($item, $issue) :
 			$issueRepo->findVolumeNextToReadIssue($volume, $issue);
+
+		$render = $item ? 'todo' :
+			$this->render('volume/volume.html.twig', [
+				'wrap' => false,
+				'volume' => $volume,
+			]);
+
+		$next = $nextIssue ? [
+			'id' => $nextIssue->getId(),
+			'name' => $nextIssue->getName(),
+			'number' => $nextIssue->getNumber(),
+			'image' => $nextIssue->getImage(),
+			'date_read' => $nextIssue->getDateRead(),
+			//
+//			'volume_name' => "{$volume->getName()} #{$nextIssue->getNumber()}",
+			'volume_name' => $nextIssue->getIssueName(),
+			'remaining' => [
+				'read' => $volume->getNumberOfIssuesRead(),
+				'total' => $volume->getNumberIssues(),
+				'text' => $volume->getRemainingIssuesToString(1),
+			],
+			//
+			'html' => $render->getContent(),
+		] : null;
 
 //		dd($nextIssue, $item, $volume, $issue);
 
@@ -120,17 +145,7 @@ class IssueController extends AbstractController {
 					'image' => $issue->getImage(),
 					'date_read' => $issue->getDateRead(),
 				],
-				'next' => [
-					'id' => $nextIssue->getId(),
-					'name' => $nextIssue->getName(),
-					'number' => $nextIssue->getNumber(),
-					'image' => $nextIssue->getImage(),
-					'date_read' => $nextIssue->getDateRead(),
-					'html' => 'todo',
-//					'html' => $this->render('issue/next.html.twig', [
-//						'issue' => $nextIssue,
-//					])->getContent(),
-				],
+				'next' => $next,
 			],
 		]);
 	}

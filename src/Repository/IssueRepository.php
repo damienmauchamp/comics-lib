@@ -75,9 +75,9 @@ class IssueRepository extends ServiceEntityRepository {
 		try {
 			return $result->getSingleResult();
 		} catch(NoResultException $e) {
-			return $this->findByVolume($volume, false)[0];
+			return $this->findByVolume($volume, false)[0] ?? null;
 		} catch(NonUniqueResultException $e) {
-			return $result->getResult()[0];
+			return $result->getResult()[0] ?? null;
 		}
 	}
 

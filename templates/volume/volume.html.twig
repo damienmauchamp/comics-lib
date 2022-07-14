@@ -1,19 +1,34 @@
 {# {{ display=  }} #}
 {# {% set displat %} #}
 
-<div class="volume" data-id="{{ volume.id }}">
+{% if wrap|default(true) %}
+
+<div class="volume"
+		data-id="{{ volume.id }}"
+
+		{% if volume.getNextToreadissue() != null %}
+			data-issue-id="{{ volume.getNextToreadissue().id }}"
+			data-issue-number="{{ volume.getNextToreadissue().number }}"
+		{% endif %}
+
+		{{ stimulus_target('volume', 'element') }}>
+
+	{% endif %}
 
 	<div class="volume-img">
 
 		<a href="{{ path('app_volume', {id:volume.id}) }}">
-			{{ include('volume/elements/image.html.twig', {display:display,volume:volume}) }}
+			{{ include('volume/elements/image.html.twig', {display:display|default('VOLUME'),volume:volume}) }}
 		</a>
 
 		<div class="progress"></div>
 	</div>
 
 	<div class="volume-details">
-		{{ include('volume/elements/details.html.twig', {display:display,volume:volume}) }}
+		{{ include('volume/elements/details.html.twig', {display:display|default('VOLUME'),volume:volume}) }}
 	</div>
-	{{ dump((volume)) }}
+	{#    {{ dump((volume)) }} #}
+
+	{% if wrap|default(true) %}
 </div>
+{% endif %}

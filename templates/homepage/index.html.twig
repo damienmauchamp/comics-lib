@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}HomepageController!{% endblock %}
+
+{% block body %}
+
+	<div class="">
+		<h1>VOLUMES</h1>
+
+		{% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadStarted, display:'NEXT_TO_READ', section: {
+			title: 'Next to Read',
+			description: 'Volumes that are next to be read',
+			id: 'nextToReadStarted'
+		}} %}
+
+		{% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadNotStarted, display:'NEXT_TO_READ', section: {
+			title: 'Not started',
+			description: 'Volumes that are not started yet',
+			id: 'nextToReadNotStarted'
+		}} %}
+
+		{#        {% include 'volume/volumes.html.twig' with {volumes:volumes.upToDate, display:'', section: { #}
+		{#            title: 'Up to date', #}
+		{#            description: 'Volumes that are up to date', #}
+		{#            id: 'upToDate' #}
+		{#        }} %} #}
+
+		<h1>ITEMS</h1>
+		@todo
+	</div>
+{% endblock %}

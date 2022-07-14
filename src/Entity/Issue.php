@@ -217,4 +217,8 @@ class Issue {
 	public function isIgnored(): bool {
 		return $this->date_ignored !== null;
 	}
+
+	public function getIssueName(): string {
+		return $this->getVolume()->getName().' #'.$this->getNumber();
+	}
 }
