@@ -1,0 +1,9 @@
+<section id="{{ from }}-issues" class="issues" {{ stimulus_controller('issue') }}>
+	<h2>Issues</h2>
+
+	<div class="issues-list">
+		{% for issue in issues %}
+			{% include 'issue/issue.html.twig' with {issue:issue, display: 'VOLUME'} %}
+		{% endfor %}
+	</div>
+</section>

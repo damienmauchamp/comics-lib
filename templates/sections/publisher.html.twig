@@ -1,0 +1,8 @@
+<section id="{{ section.id|default('publisher') }}" class="publisher">
+	<h2>Publisher</h2>
+
+	<img src="{{ publisher.image }}" alt="{{ publisher.name }}" style="height:50px;"/>
+	<li><a href="{{ path('app_publisher', {id: publisher.id}) }}">{{ publisher.name }}</a></li>
+	<p>{{ publisher.description }}</p>
+
+</section>

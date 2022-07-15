@@ -262,4 +262,8 @@ class Volume {
 		$this->setNextToReadIssue($issueNextToRead);
 	}
 
+	public function isDone(): bool {
+		return $this->getRemainingIssues() === 0;
+	}
+
 }

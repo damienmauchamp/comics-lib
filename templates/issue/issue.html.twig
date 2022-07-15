@@ -1,0 +1,46 @@
+{% if wrap|default(true) %}
+
+<div class="issue {{ issue.isRead() ? 'read' : '' }}"
+		data-id="{{ issue.id }}"
+		data-number="{{ issue.number }}"
+		data-read="{{ issue.isRead() }}"
+
+		{{ stimulus_target('issue', 'element') }}>
+
+	{% endif %}
+
+	<div class="issue-img">
+
+		<a href="{{ path('app_issue', {id:issue.id}) }}">
+
+			<img src="{{ issue.image }}" alt="{{ issue.getIssueName() }}"
+					style="height:50px;"
+					loading="lazy"/>
+			{#            {{ include('issue/elements/image.html.twig', {display:display|default('VOLUME'),issue:issue}) }} #}
+		</a>
+
+	</div>
+
+	<div class="issue-details">
+
+		<div class="title">
+			<a href="{{ path('app_issue', {id:issue.id}) }}">
+				<h3>{{ issue.getIssueName() }}</h3>
+				<h4>{{ issue.name }}</h4>
+			</a>
+
+			{#            {% if button %} #}
+			<a href="#" class="btn-read" {{ stimulus_action('issue', 'read') }}
+					data-issue-id="{{ issue.id }}">✔</a>
+			{#            <a href="#" class="btn-read" {{ stimulus_action('volume', 'read') }} data-volume-id="{{ volume.id }}">✔</a> #}
+			{#            {% endif %} #}
+
+		</div>
+
+		{#        {{ include('issue/elements/details.html.twig', {display:display|default('VOLUME'),issue:issue}) }} #}
+	</div>
+	{#    {{ dump((issue)) }} #}
+
+	{% if wrap|default(true) %}
+</div>
+{% endif %}

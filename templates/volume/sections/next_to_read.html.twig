@@ -1,0 +1,18 @@
+<section id="volume-next-to-read" class="issue-next-to-read"
+		style="{{ volume.isDone() ? 'display:none' : '' }}">
+
+	<h2>Next to read</h2>
+
+	{% if volume.getNextToreadissue() == null %}
+
+		{#  nothing #}
+
+	{% else %}
+
+		<div {{ stimulus_controller('volume') }}>
+			{% include 'volume/volume.html.twig' with {volume:volume, display: 'PROGRESS'} %}
+		</div>
+
+	{% endif %}
+
+</section>

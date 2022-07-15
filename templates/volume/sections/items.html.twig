@@ -1,0 +1,16 @@
+<section id="{{ from }}-items" class="items">
+	<h2>Items</h2>
+
+	{% for item in items %}
+		<ul>
+			<li>
+				<img src="../images/items/{{ item.image }}" alt="{{ item.title }}" style="height:50px;" loading="lazy"/>
+			</li>
+			<li>{{ item.id }}</li>
+			<li>{{ item.itemCollection.name }}</li>
+			<li>{{ item.number ? ("TOME " ~  item.number) : '' }}</li>
+			<li><a href="{{ path('app_item', {id: item.id}) }}">{{ item.getFullName() }}</a></li>
+			<li>{{ item.title }}</li>
+		</ul>
+	{% endfor %}
+</section>

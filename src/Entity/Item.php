@@ -189,12 +189,16 @@ class Item {
 		return $this;
 	}
 
-
 	public function createImageName(string $ext = 'jpg'): string {
 		$unique_id = uniqid();
 		$collectionName = $this->getItemCollection()->getName() ?? '';
 		$name = preg_replace('/[^a-z\d]+/i', '-', "{$collectionName} {$this->getNumber()} {$this->getTitle()}");
 		$name = substr($name, 0, 90)."-$unique_id";
 		return "$name.{$ext}";
+	}
+
+	public function getFullName(): string {
+		$number = $this->getNumber() ? ", tome {$this->getNumber()} " : '';
+		return trim($this->getItemCollection()->getName()."{$number} - ".$this->getTitle(), ' -');
 	}
 }

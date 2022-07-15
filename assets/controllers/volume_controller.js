@@ -1,4 +1,4 @@
-import {Controller} from '@hotwired/stimulus';
+import Controller from './abstract_controller';
 
 export default class extends Controller {
 
@@ -47,74 +47,24 @@ export default class extends Controller {
 				return response.json();
 			}
 			throw new Error('Network response was not ok.');
-		}).then(json => {
+		}).then(json => json.data).then(data => {
 
-			const data = json.data;
+			// marking as read
+			this.setVolumeNextToReadIssue(event, volume, data);
 
-			const nextToReadStarted = document.querySelector('section#nextToReadStarted'),
-				isHomepage = !!nextToReadStarted;
-
-			if (!isHomepage) {
-				// todo : mark issue as read if we're on the volume page since it'd be listed
+			if (!this.isHomepage()) {
+				// mark issue as read if we're on the volume page since it'd be listed
+				this.setVolumeIssueRead(event, issueId, false);
 			}
-
-			if (!data.next) {
-				if (nextToReadStarted) {
-					volume.remove();
-				} else {
-					// todo : volume done
-					volume.innerHTML = '<div>Up to date</div>';
-				}
-				return true;
-			}
-
-			volume.dataset.issueId = data.next.id;
-			volume.dataset.issueNumber = data.next.number;
-
-			// todo : progress
-
-			// title
-			volume.querySelector('.volume-details .title h3 a').textContent = data.next.volume_name;
-
-			// img
-			const img = volume.querySelector('.volume-img img');
-			img.src = data.next.image;
-			img.alt = data.next.name;
-
-			// remaining
-			const remaining = volume.querySelector('.volume-details .remaining');
-			try {
-				remaining.textContent = data.next.remaining.text;
-				remaining.dataset.read = data.next.remaining.read;
-				remaining.dataset.total = data.next.remaining.total;
-			} catch (e) {
-
-			}
-
-			// volume.innerHTML = data.next.html;
 
 			return data;
+
 		}).then(data => {
 
-			// Moving the volume to the nextToReadStarted section
+			this.moveVolumeToNextToRead(event, volume);
 
-			const nextToReadStarted = document.querySelector('section#nextToReadStarted'),
-				nextToReadNotStarted = document.querySelector('section#nextToReadNotStarted');
-			const isHomepage = !!nextToReadStarted;
+			return data;
 
-			if (!isHomepage) {
-				// skipping
-				return data;
-			}
-
-			if (nextToReadNotStarted.contains(volume)) {
-				// volume is just being started
-				// we move it first to the nextToReadStarted section
-				const list = nextToReadStarted.querySelector('.volumes-list');
-				// nextToReadStarted.appendChild(volume);
-				list.insertBefore(volume, list.firstChild);
-
-			}
 		}).catch(error => {
 			console.log(error);
 		});
