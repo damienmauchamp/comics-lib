@@ -11,6 +11,13 @@
 			data-issue-number="{{ volume.getNextToreadissue().number }}"
 		{% endif %}
 
+		{% if controllers is defined %}
+			{% for controller in controllers %}
+				{{ stimulus_controller(controller.name) }}
+			{% endfor %}
+		{% endif %}
+
+
 		{{ stimulus_target('volume', 'element') }}>
 
 	{% endif %}
@@ -21,7 +28,11 @@
 			{{ include('volume/elements/image.html.twig', {display:display|default('VOLUME'),volume:volume}) }}
 		</a>
 
-		<div class="progress"></div>
+		<div class="progress">
+			<div class="progress-bar progress-bar-success {{ volume.isDone() ? 'complete': 'uncomplete' }}" role="progressbar" aria-valuenow="{{ volume.getProgress() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ volume.getProgress() }}%">
+				{{ volume.getProgress() }}%
+			</div>
+		</div>
 	</div>
 
 	<div class="volume-details">

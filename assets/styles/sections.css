@@ -1,0 +1,56 @@
+/*
+ * SECTIONS
+ */
+section {
+	@apply max-w-screen-lg m-auto;
+}
+
+section + section {
+	@apply mt-4;
+}
+
+/*section h2 {*/
+/*	@apply text-xl font-bold;*/
+/*}*/
+
+/*section h3 {*/
+/*	@apply text-base;*/
+/*}*/
+
+section .remaining {
+	@apply text-xs;
+}
+
+/* Modules */
+.section-side-div {
+	@apply flex flex-wrap flex-row;
+}
+
+/*
+ * SECTIONS LISTS
+ */
+section > div {
+	/* Grid view */
+	@apply grid grid-cols-8;
+	@apply tablet:grid-cols-6;
+	@apply mobile:grid-cols-3;
+	@apply m-1;
+}
+
+section.list > div {
+	/* List view */
+	@apply flex flex-col;
+}
+
+section.side > div {
+	/* Info on the side */
+	@apply section-side-div;
+}
+
+/*
+ * SECTIONS UNIQUE
+ */
+section.unique > div {
+	@apply section-side-div;
+	@apply h-56;
+}

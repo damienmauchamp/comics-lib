@@ -22,6 +22,9 @@ export default class extends Controller {
 	 * @returns {boolean}
 	 */
 	setVolumeNextToReadIssue(event, volume, data) {
+		const loader = volume.querySelector('.loader'),
+			volumeImg = volume.querySelector('.volume-img'),
+			volumeDetails = volume.querySelector('.volume-details');
 
 		if (!data.next) {
 			if (this.isHomepage()) {
@@ -36,24 +39,42 @@ export default class extends Controller {
 		volume.dataset.issueId = data.next.id;
 		volume.dataset.issueNumber = data.next.number;
 
-		// todo : progress
-
-		// title
-		volume.querySelector('.volume-details .title h3 a').textContent = data.next.volume_name;
-
-		// img
-		const img = volume.querySelector('.volume-img img');
+		// image
+		const img = volumeImg.querySelector('img');
+		img.onload = () => {
+			if (loader) {
+				loader.remove();
+			}
+			volumeImg.classList.remove('loading');
+		};
 		img.src = data.next.image;
 		img.alt = data.next.name;
 
-		// remaining
-		const remaining = volume.querySelector('.volume-details .remaining');
-		try {
-			remaining.textContent = data.next.remaining.text;
-			remaining.dataset.read = data.next.remaining.read;
-			remaining.dataset.total = data.next.remaining.total;
-		} catch (e) {
+		// title
+		volumeDetails.querySelector('.title h3 a').textContent = data.next.volume_name;
 
+		// progress bar
+		const progressBar = volumeImg.querySelector('.progress-bar');
+		try {
+			progressBar.classList.toggle('complete', data.volume.done);
+			progressBar.classList.toggle('uncomplete', !data.volume.done);
+			progressBar.innerHTML = `${data.volume.progress}%`;
+			progressBar.style.width = `${data.volume.progress}%`;
+			progressBar.attributes['aria-valuenow'].value = data.volume.progress;
+		} catch (e) {
+			console.error('[PROGRESS BAR] Erreur', e, progressBar)
+		}
+
+		// remaining
+		const remaining = volumeDetails.querySelector('.remaining')
+		try {
+			if (remaining) {
+				remaining.textContent = data.volume.remaining.text;
+				remaining.dataset.read = data.volume.remaining.read;
+				remaining.dataset.total = data.volume.remaining.total;
+			}
+		} catch (e) {
+			console.error('[REMAINING] Erreur', e, remaining)
 		}
 	}
 

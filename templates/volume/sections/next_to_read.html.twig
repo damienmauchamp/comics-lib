@@ -1,4 +1,4 @@
-<section id="volume-next-to-read" class="issue-next-to-read"
+<section id="volume-next-to-read" class="unique issue-next-to-read"
 		style="{{ volume.isDone() ? 'display:none' : '' }}">
 
 	<h2>Next to read</h2>
@@ -9,10 +9,14 @@
 
 	{% else %}
 
-		<div {{ stimulus_controller('volume') }}>
-			{% include 'volume/volume.html.twig' with {volume:volume, display: 'PROGRESS'} %}
+		<div class="content volume-unique" {{ stimulus_controller('volume') }}>
+			{% include 'volume/volume.html.twig' with {volume:volume, display: 'PROGRESS' } %}
+			{#            controllers: [{ #}
+			{#                name: 'volume' #}
+			{#            }] #}
 		</div>
 
 	{% endif %}
 
 </section>
+

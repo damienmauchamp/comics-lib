@@ -1,7 +1,7 @@
-<section id="{{ section.id }}" class="volumes" {{ stimulus_controller('volume') }}>
+<section id="{{ section.id }}" class="{{ section.display|default('grid') }} volumes" {{ stimulus_controller('volume') }}>
 	<h2>{{ section.title }} ({{ volumes|length }})</h2>
 
-	<div class="volumes-list">
+	<div class="content volumes-list">
 		{% for volume in volumes %}
 			{% include 'volume/volume.html.twig' with {volume:volume, display: display} %}
 		{% endfor %}

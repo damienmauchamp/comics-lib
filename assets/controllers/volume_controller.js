@@ -38,6 +38,18 @@ export default class extends Controller {
 		// form.append('issueId', issueId);
 		// form.append('issueNumber', issueNumber);
 
+		// adding a loader
+		const loader = document.createElement('div'),
+			loaderIcon = document.createElement('i');
+		loader.className = 'loader';
+		loaderIcon.className = 'fa-spin fa-solid fa-circle-notch';
+		// loaderIcon.attributes['aria-hidden'] = 'true';
+		loader.appendChild(loaderIcon);
+
+		const volumeImg = volume.querySelector('.volume-img');
+		volumeImg.prepend(loader);
+		volumeImg.classList.add('loading');
+
 		fetch(url, {
 			method: 'POST',
 			body: form

@@ -123,11 +123,6 @@ class IssueController extends AbstractController {
 			//
 //			'volume_name' => "{$volume->getName()} #{$nextIssue->getNumber()}",
 			'volume_name' => $nextIssue->getIssueName(),
-			'remaining' => [
-				'read' => $volume->getNumberOfIssuesRead(),
-				'total' => $volume->getNumberIssues(),
-				'text' => $volume->getRemainingIssuesToString(1),
-			],
 			//
 			'html' => $render->getContent(),
 		] : null;
@@ -144,6 +139,15 @@ class IssueController extends AbstractController {
 					'number' => $issue->getNumber(),
 					'image' => $issue->getImage(),
 					'date_read' => $issue->getDateRead(),
+				],
+				'volume' => [
+					'remaining' => [
+						'read' => $volume->getNumberOfIssuesRead(),
+						'total' => $volume->getNumberIssues(),
+						'text' => $volume->getRemainingIssuesToString(1),
+					],
+					'progress' => $volume->getProgress(),
+					'done' => $volume->isDone(),
 				],
 				'next' => $next,
 			],

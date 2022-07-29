@@ -266,4 +266,11 @@ class Volume {
 		return $this->getRemainingIssues() === 0;
 	}
 
+	public function getProgress(): float {
+		if($this->isDone()) {
+			return 100;
+		}
+		return $this->number_of_issues_read / $this->number_issues * 100;
+	}
+
 }

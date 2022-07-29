@@ -1,0 +1,134 @@
+/* ITEMS Modules */
+.section-side-div-div {
+	@apply flex-row;
+	@apply px-0;
+}
+
+/* CONTENT Modules */
+/*.section-side-div-volume-img {*/
+/*	@apply basis-1/3;*/
+/*}*/
+
+/*
+ * SECTIONS ITEMS
+ */
+section > div.content > div {
+	/* Grid view */
+	@apply flex flex-col grow-0 shrink-0;
+	@apply px-1;
+	/*@apply tablet:basis-1/6;*/
+	/*@apply mobile:basis-1/3;*/
+}
+
+section.list > div > div {
+	/* List view */
+	@apply flex-row grow w-full;
+	@apply max-h-56;
+	@apply px-0;
+}
+
+section.side > div.content > div {
+	/* Info on the side */
+	@apply section-side-div-div;
+	/*@apply basis-1/3;*/
+	@apply basis-1/4;
+	/*@apply tablet:basis-1/3;*/
+	/*@apply mobile:basis-1/3;*/
+}
+
+section.unique > div > div {
+	/* Unique */
+	@apply section-side-div-div;
+	@apply w-full h-full;
+}
+
+/* CONTENT GRID */
+section > div.content .volume-img {
+	@apply rounded-md;
+	/*@apply overflow-hidden;*/
+	@apply shrink;
+	@apply relative;
+}
+
+section > div.content .volume-details {
+	/*@apply grow;*/
+}
+
+section > div.content .volume-img img {
+	/*@apply h-full w-auto;*/
+	@apply h-auto w-auto;
+}
+
+/* CONTENT LIST */
+section.list > div .volume-img {
+	/*@apply grow;*/
+}
+
+section.list > div .volume-details {
+}
+
+section.list > div .volume-img img {
+	/*@apply h-full;*/
+	@apply w-20 h-auto;
+}
+
+/* CONTENT SIDE */
+section.side > div.content .volume-img {
+	/*@apply section-side-div-volume-img;*/
+	@apply basis-1/3;
+}
+
+section.side > div.content .volume-details {
+	/*@apply shrink;*/
+	@apply basis-2/3;
+}
+
+section.side > div.content .volume-img img {
+}
+
+section.side > div.content .volume-details > * {
+}
+
+/* CONTENT UNIQUE */
+section.unique > div.content .volume-img {
+	/*@apply basis-1/3;*/
+	/*@apply section-side-div-volume-img;*/
+}
+
+section.unique > div.content .volume-details {
+	@apply basis-2/3 grow;
+}
+
+section.unique > div.content .volume-img img {
+	/*@apply h-fit;*/
+	@apply h-full w-auto;
+}
+
+section.unique > div.content .volume-details > * {
+}
+
+/*
+ * LOADER
+ */
+section > div.content .volume-img.loading {
+	@apply bg-black;
+}
+
+section > div.content .volume-img.loading img {
+	@apply opacity-50;
+}
+
+section > div.content .volume-img.loading .loader {
+	@apply block;
+}
+
+section > div.content .volume-img .loader {
+	@apply absolute left-1/2 top-1/2;
+	@apply hidden;
+}
+
+section > div.content .volume-img .loader > i,
+section > div.content .volume-img .loader > svg {
+	@apply relative -left-1/2 text-2xl;
+	/*@apply text-opacity-80 text-gray-600;*/
+}
