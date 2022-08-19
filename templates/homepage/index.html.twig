@@ -2,10 +2,14 @@
 
 {% block title %}HomepageController!{% endblock %}
 
-{% block body %}
+{% block searchbar %}
 
 	{# search bar #}
 	{% include 'search/search_bar.html.twig' %}
+
+{% endblock %}
+
+{% block body %}
 
 	<h1>VOLUMES</h1>
 
@@ -16,20 +20,20 @@
 		display: '',
 	}} %}
 
-	{% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadNotStarted, display:'NEXT_TO_READ', section: {
-		title: 'Not started',
-		description: 'Volumes that are not started yet',
-		id: 'nextToReadNotStarted',
-		display: 'list',
-	}} %}
+	{#    {% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadNotStarted, display:'NEXT_TO_READ', section: { #}
+	{#        title: 'Not started', #}
+	{#        description: 'Volumes that are not started yet', #}
+	{#        id: 'nextToReadNotStarted', #}
+	{#        display: 'list', #}
+	{#    }} %} #}
 
-	{# TMP for testing #}
-	{% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadStarted, display:'NEXT_TO_READ', section: {
-		title: 'Next to Read',
-		description: 'Volumes that are next to be read',
-		id: 'nextToReadStarted',
-		display: 'side',
-	}} %}
+	{#    #}{# TMP for testing #}
+	{#    {% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadStarted, display:'NEXT_TO_READ', section: { #}
+	{#        title: 'Next to Read', #}
+	{#        description: 'Volumes that are next to be read', #}
+	{#        id: 'nextToReadStarted', #}
+	{#        display: 'side', #}
+	{#    }} %} #}
 
 	{#        {% include 'volume/volumes.html.twig' with {volumes:volumes.upToDate, display:'', section: { #}
 	{#            title: 'Up to date', #}

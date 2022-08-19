@@ -7,11 +7,20 @@ window.onload = () => {
 	let test = false;
 
 // const element = document;
-	const element = document.querySelector('main'),
+	const element = document.querySelector('.main'),
 		searchBar = {
+			search: document.querySelector('#search'),
 			bar: document.querySelector('#search-bar'),
 			container: document.querySelector('#search-bar-container'),
 			input: document.querySelector('#search-bar input'),
+			cancelButton: document.querySelector('#search-bar button.cancel'),
+			// results: document.querySelector('#search-bar button.cancel'),
+			isOpen: () => {
+				searchBar.bar.classList.contains('open');
+			},
+			isFocus: () => {
+				searchBar.search.classList.contains('focus');
+			}
 		},
 		barData = {
 			// maxHeight: searchBar.container.offsetHeight + searchBar.input.offsetHeight,
@@ -29,8 +38,10 @@ window.onload = () => {
 			containerHeight: searchBar.container.offsetHeight,
 			inputHeight: searchBar.input.offsetHeight,
 			direction: null,
+			target: e.target,
 		};
 		// console.log('START', 'barData.maxHeight:', barData.maxHeight)
+		console.log('START', 'e.target:', e.target);
 	});
 	element.addEventListener("touchmove", function (e) {
 
@@ -92,8 +103,8 @@ window.onload = () => {
 		}
 		console.log('-----------------------------------------------------')
 	});
-
 	element.addEventListener("touchend", function (e) {
+
 
 		console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 		console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
@@ -157,6 +168,8 @@ window.onload = () => {
 				height: 0,
 			});
 
+			unFocusBar();
+
 			if (isOpened && currentScrollTop < barData.maxHeight) {
 				// element.scrollTop = 0;
 				$(element).stop().animate({scrollTop: 0});
@@ -172,4 +185,42 @@ window.onload = () => {
 
 	});
 
+	const unFocusBar = () => {
+
+		// removing the class
+		searchBar.search.classList.toggle('focus', false);
+
+		document.querySelector('body').classList.toggle('searching', false);
+
+	};
+
+	// focusing the input
+	searchBar.input.addEventListener('focus', function (e) {
+
+		// adding the class
+		searchBar.search.classList.toggle('focus', true);
+
+		document.querySelector('body').classList.toggle('searching', false);
+
+		console.log('focus');
+	});
+
+	// bluring the input
+	// searchBar.input.addEventListener('blur', function (e) {
+	//
+	// 	// todo check blur target (replace it ?)
+	// 	// console.log('blur', e, e.target)
+	// 	console.log('blur', e)
+	// 	unFocusBar();
+	// });
+
+	// clicking on the "Cancel" button
+	searchBar.cancelButton.addEventListener('click', function (e) {
+		unFocusBar();
+	});
+
+	// searching
 }
+
+// searchBar
+// bar

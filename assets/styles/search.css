@@ -1,3 +1,9 @@
+body.searching,
+body.searching main,
+body.searching .main {
+	@apply overflow-hidden;
+}
+
 #search-bar {
 	/*@apply w-full;*/
 	/*@apply py-2 px-3;*/
@@ -27,6 +33,8 @@
 	/* tmp */
 	/*@apply h-[32px];*/
 	@apply max-h-[32px];
+
+	@apply transition-search-bar-width;
 }
 
 #search-bar input#search::-webkit-input-placeholder {
@@ -42,7 +50,105 @@
 	/*@apply max-h-[32px];*/
 }
 
+#search.focus {
+	@apply min-h-[48px];
+
+	@apply flex flex-col;
+	@apply absolute top-0 left-0 right-0 bottom-0;
+
+	@apply h-full;
+
+	@apply overflow-hidden;
+
+
+	/**/
+	@apply z-50;
+	@apply fixed top-0 w-full;
+
+	/* tmp */
+	background: lightgray;
+}
+
+#search.focus #search-bar {
+	/*@apply fixed top-0 left-0 right-0 z-50;*/
+	/*@apply mb-[48px];*/
+}
+
+#search.focus #search-bar #search-bar-container {
+	@apply flex;
+}
+
+#search.focus #search-bar input#search {
+	@apply w-3/4;
+}
+
+#search-bar button.cancel {
+	@apply opacity-0 w-0;
+	@apply transition-search-bar-width transition-search-bar-opacity;
+}
+
+#search.focus #search-bar button.cancel {
+	@apply opacity-100 w-1/4;
+}
+
+
+#search-results {
+	@apply opacity-0 transition-search-bar-opacity;
+	@apply h-0;
+	@apply grow;
+
+	/* tmp */
+	background: white;
+}
+
+#search.focus #search-results {
+	@apply opacity-100 z-50;
+	/*@apply h-[unset];*/
+}
+
+
+/* RESULTS */
+/*#search:not(.focus) ul.results {*/
+/*	@apply hidden;*/
+/*}*/
+
+ul.results {
+	/*@apply flex;*/
+	@apply overflow-y-auto max-h-full;
+
+}
+
+ul.results li.result {
+	@apply flex flex-nowrap items-center;
+	@apply h-16 p-1;
+}
+
+ul.results li.result .result-image {
+	@apply h-full ;
+}
+
+ul.results li.result .result-image img {
+	@apply w-auto max-h-full;
+	/*@apply h-full w-auto;*/
+	/*@apply flex flex-nowrap items-center;*/
+	/*@apply h-16;*/
+}
+
+ul.results li.result .result-info {
+	@apply flex flex-col flex-nowrap justify-center;
+	@apply h-full;
+	@apply text-sm;
+}
 
 /*.tmp {*/
 /*	@apply mb-[1000px];*/
+/*}*/
+
+/* tmp */
+/*#search {*/
+/*	background: blue;*/
+/*}*/
+
+/*#search-results {*/
+/*	background: red;*/
 /*}*/

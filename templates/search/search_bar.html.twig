@@ -1,16 +1,51 @@
-<div id="search-bar">
+<div id="search">
+	<div id="search-bar">
 
-	<div id="search-bar-container">
+		<div id="search-bar-container">
 
-		<label for="search" class="hidden"></label>
-		<input type="text"
-				name="search"
-				id="search"
-				value="{{ search|default('') }}"
-				placeholder="Search..."
-		/>
+			<label for="search" class="hidden"></label>
+			<input type="text"
+					name="search"
+					id="search"
+					value="{{ search|default('') }}"
+					placeholder="Search..."
+			/>
+
+			<button class="cancel">Cancel</button>
+
+
+		</div>
+
+		<div id="search-bar-filters">
+		</div>
 
 	</div>
+	<div id="search-results" class="opacity-0">
 
+		<ul class="results">
+
+			{# tmp samples #}
+
+			{% for i in 0..50 %}
+				<li class="result">
+					<img class="result-image"
+							src="https://comicvine.gamespot.com/a/uploads/original/6/67663/5573660-12.jpg"
+							alt="Batman : Damian Wayne (2055)">
+
+					<div class="result-info">
+						<div class="result-name">Batman : Damian Wayne <span class="result-year">(2055)</span></div>
+						<div class="result-issues">67 issues</div>
+						<div class="result-publisher">DC Comics</div>
+					</div>
+				</li>
+			{% endfor %}
+
+			{# end tmp samples #}
+
+			{# end tmp samples #}
+
+		</ul>
+
+	</div>
 </div>
 {# <div class="tmp"></div> #}

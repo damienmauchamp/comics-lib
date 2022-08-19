@@ -16,6 +16,8 @@ module.exports = {
 			fontSize: {},
 			transitionProperty: {
 				'search-bar': 'height .6s ease',
+				'search-bar-width': 'width .6s',
+				'search-bar-opacity': 'opacity .6s',
 				'progress-bar': 'width .6s ease',
 			},
 
