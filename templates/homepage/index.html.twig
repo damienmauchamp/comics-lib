@@ -4,6 +4,9 @@
 
 {% block body %}
 
+	{# search bar #}
+	{% include 'search/search_bar.html.twig' %}
+
 	<h1>VOLUMES</h1>
 
 	{% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadStarted, display:'NEXT_TO_READ', section: {

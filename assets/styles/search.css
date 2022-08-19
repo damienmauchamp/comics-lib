@@ -1,0 +1,48 @@
+#search-bar {
+	/*@apply w-full;*/
+	/*@apply py-2 px-3;*/
+
+	@apply h-0 overflow-hidden;
+
+	/*@apply transition-progress-bar duration-[0.6s];*/
+
+	/*@apply flex content-center;*/
+
+	/* tmp */
+	/*@apply bg-black;*/
+}
+
+#search-bar #search-bar-container {
+	@apply py-3 px-3;
+	@apply max-h-full;
+
+	/*@apply flex;*/
+}
+
+#search-bar input#search {
+	/*@apply w-full;*/
+	@apply w-full max-h-full;
+	/*@apply */
+
+	/* tmp */
+	/*@apply h-[32px];*/
+	@apply max-h-[32px];
+}
+
+#search-bar input#search::-webkit-input-placeholder {
+	opacity: 0;
+}
+
+#search-bar.open input#search::-webkit-input-placeholder {
+	opacity: 1;
+}
+
+#search-bar input#search.open {
+	/*@apply h-[32px];*/
+	/*@apply max-h-[32px];*/
+}
+
+
+/*.tmp {*/
+/*	@apply mb-[1000px];*/
+/*}*/

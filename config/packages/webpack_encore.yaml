@@ -6,11 +6,11 @@ webpack_encore:
 
     # Set attributes that will be rendered on all script and link tags
     script_attributes:
-        defer: true
+        defer: false
         # Uncomment (also under link_attributes) if using Turbo Drive
         # https://turbo.hotwired.dev/handbook/drive#reloading-when-assets-change
         # 'data-turbo-track': reload
-    # link_attributes:
+        # link_attributes:
         # Uncomment if using Turbo Drive
         # 'data-turbo-track': reload
 
@@ -23,12 +23,12 @@ webpack_encore:
     # Set to true to throw an exception if the entrypoints.json file is missing or an entry is missing from the data
     strict_mode: false
 
-    # If you have multiple builds:
-    # builds:
-        # pass "frontend" as the 3rg arg to the Twig functions
-        # {{ encore_entry_script_tags('entry1', null, 'frontend') }}
+      # If you have multiple builds:
+      # builds:
+      # pass "frontend" as the 3rg arg to the Twig functions
+      # {{ encore_entry_script_tags('entry1', null, 'frontend') }}
 
-        # frontend: '%kernel.project_dir%/public/frontend/build'
+    # frontend: '%kernel.project_dir%/public/frontend/build'
 
     # Cache the entrypoints.json (rebuild Symfony's cache when entrypoints.json changes)
     # Put in config/packages/prod/webpack_encore.yaml

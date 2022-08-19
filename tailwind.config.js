@@ -15,6 +15,7 @@ module.exports = {
 			fontFamily: {},
 			fontSize: {},
 			transitionProperty: {
+				'search-bar': 'height .6s ease',
 				'progress-bar': 'width .6s ease',
 			},
 

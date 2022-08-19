@@ -15,11 +15,15 @@ import './bootstrap';
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all.js';
 
-// import '@fortawesome/fontawesome-free/js/fontawesome'
-// import '@fortawesome/fontawesome-free/js/solid'
-// import '@fortawesome/fontawesome-free/js/regular'
-// import '@fortawesome/fontawesome-free/js/brands'
+// require jQuery normally
+const $ = require('jquery');
+global.$ = global.jQuery = $;
+
+//
+import './js/search';
 
 //
 import './styles/sections.css';
 import './styles/items.css';
+import './styles/progress_bar.css';
+import './styles/search.css';
