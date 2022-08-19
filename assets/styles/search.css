@@ -92,6 +92,35 @@ body.searching .main {
 }
 
 
+#search-filters {
+	@apply opacity-0 transition-search-bar-opacity;
+	@apply h-0;
+	@apply flex flex-nowrap justify-evenly;
+
+	/* tmp */
+	background: lightgray;
+}
+
+#search-filters .search-filter {
+	@apply grow;
+	@apply bg-gray-600;
+	@apply h-6;
+	@apply rounded-lg;
+}
+
+#search-filters .search-filter.selected {
+	@apply bg-gray-200;
+}
+
+#search.focus #search-filters {
+	@apply h-auto opacity-100;
+	@apply py-1 px-3;
+}
+
+#search.focus #search-filters .search-filter {
+}
+
+
 #search-results {
 	@apply opacity-0 transition-search-bar-opacity;
 	@apply h-0;

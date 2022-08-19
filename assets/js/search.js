@@ -7,19 +7,19 @@ window.onload = () => {
 	let test = false;
 
 // const element = document;
-	const element = document.querySelector('.main'),
+	const element = document.querySelector('main'),
 		searchBar = {
 			search: document.querySelector('#search'),
 			bar: document.querySelector('#search-bar'),
 			container: document.querySelector('#search-bar-container'),
 			input: document.querySelector('#search-bar input'),
 			cancelButton: document.querySelector('#search-bar button.cancel'),
-			// results: document.querySelector('#search-bar button.cancel'),
+			results: document.querySelector('#search-results ul.results'),
 			isOpen: () => {
-				searchBar.bar.classList.contains('open');
+				return searchBar.bar.classList.contains('open');
 			},
 			isFocus: () => {
-				searchBar.search.classList.contains('focus');
+				return searchBar.search.classList.contains('focus');
 			}
 		},
 		barData = {
@@ -39,6 +39,7 @@ window.onload = () => {
 			inputHeight: searchBar.input.offsetHeight,
 			direction: null,
 			target: e.target,
+			continue: !$(e.target).closest('#search').length,
 		};
 		// console.log('START', 'barData.maxHeight:', barData.maxHeight)
 		console.log('START', 'e.target:', e.target);
@@ -47,6 +48,9 @@ window.onload = () => {
 
 		if (!scrollEvent) {
 			return true;
+		}
+		if (!scrollData.continue) {
+			return false;
 		}
 
 		let delta = e.touches[0].pageY - scrollEvent.touches[0].pageY,
@@ -67,6 +71,13 @@ window.onload = () => {
 			// test = true;
 
 			let newHeight = barData.maxHeight - currentScrollTop;
+
+			if (currentScrollTop === 0 && !searchBar.isOpen()) {
+				newHeight = 0;
+			}
+
+			console.log('currentScrollTop:', currentScrollTop);
+			console.log('searchBar.isOpen():', searchBar.isOpen());
 			console.log('newHeight:', newHeight);
 			if (newHeight < 0) {
 				newHeight = 0;
@@ -86,6 +97,8 @@ window.onload = () => {
 			// return true;
 		} else if (direction === 'up') {
 
+			// if (searchBar.bar.style.height)
+
 			// UP
 
 			// console.log('barTotalHeight:', barTotalHeight);
@@ -93,6 +106,7 @@ window.onload = () => {
 			if (delta > 0 && delta < barData.maxHeight) {
 				// searchBar.bar.style.height = `${barTotalHeight - delta}px`;
 				searchBar.bar.style.height = `${delta}px`;
+				console.log('NOUVELLE HAUTEUR:', delta);
 			}
 
 			// console.log('Move delta:', direction, delta)
@@ -105,6 +119,12 @@ window.onload = () => {
 	});
 	element.addEventListener("touchend", function (e) {
 
+		if (!scrollEvent) {
+			return true;
+		}
+		if (!scrollData.continue) {
+			return false;
+		}
 
 		console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 		console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
@@ -130,6 +150,10 @@ window.onload = () => {
 		// up : opening
 		let aaaa = scrollData.direction === 'down' ?
 			(barData.maxHeight * 2 / 3) : (barData.maxHeight / 2);
+		console.log('barHeight', barHeight)
+		console.log('scrollData.direction', scrollData.direction)
+		console.log('barData.maxHeight', barData.maxHeight)
+		console.log('aaaa', aaaa)
 
 		if (barHeight > aaaa) {
 			console.log('OPEN');
@@ -190,7 +214,7 @@ window.onload = () => {
 		// removing the class
 		searchBar.search.classList.toggle('focus', false);
 
-		document.querySelector('body').classList.toggle('searching', false);
+		document.body.classList.toggle('searching', false);
 
 	};
 
@@ -200,9 +224,17 @@ window.onload = () => {
 		// adding the class
 		searchBar.search.classList.toggle('focus', true);
 
-		document.querySelector('body').classList.toggle('searching', false);
+		document.body.classList.toggle('searching', false);
 
 		console.log('focus');
+	});
+
+	// focusing the input
+	searchBar.input.addEventListener('input', function (e) {
+
+		console.log('search', e.target.value);
+
+		// searchBar.results.innerHTML = '';
 	});
 
 	// bluring the input
