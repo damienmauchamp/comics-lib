@@ -69,11 +69,9 @@ class VolumeController extends AbstractController {
 	}
 
 	/**
-	 * ADD
-	 * @todo remove GET
+	 * Adding a volume to the library
 	 */
-	#[NoReturn] #[Route('/volume/{idc<\d+>}/add', name: 'app_volume_add',
-		methods: ['GET', 'POST'])]
+	#[Route('/volume/{idc<\d+>}/add', name: 'app_volume_add', methods: ['POST'])]
 	public function add(int     $idc,
 						array   $params = [],
 						array   $issues = [],
@@ -83,23 +81,30 @@ class VolumeController extends AbstractController {
 
 		/** @var JsonResponse $response */
 		$response = $this->forward('App\Controller\VolumeController::update', [
-			'id' => $idc,
+			'idc' => $idc,
 			'params' => $params,
 			'issues' => $issues,
 			'id_force' => $id_force,
 			'id_start' => $id_start,
 			'interval' => $interval,
+			'add' => true,
 		]);
-		return $response;
+		$json = json_decode($response->getContent(), true);
+
+		if($json['status'] == 'success') {
+			$json['message'] = 'The volume has been added';
+		}
+		else if($json['status'] == 'ok') {
+			$json['message'] = 'The volume is already in your library';
+		}
+		return new JsonResponse($json);
 	}
 
 
 	/**
 	 * ADD + UPDATE
-	 * @todo remove GET
 	 */
-	#[NoReturn] #[Route('/volume/{idc<\d+>}/update', name: 'app_volume_update',
-		methods: ['GET', 'POST'])]
+	#[NoReturn] #[Route('/volume/{idc<\d+>}/update', name: 'app_volume_update', methods: ['POST'])]
 	public function update(ManagerRegistry     $doctrine,
 						   APIService          $api,
 						   RequestStack        $requestStack,
@@ -111,12 +116,18 @@ class VolumeController extends AbstractController {
 						   array               $issues = [],
 						   int                 $id_force = null,
 						   int                 $id_start = null,
-						   ?string             $interval = null): JsonResponse {
+						   ?string             $interval = null,
+						   bool                $add = false): JsonResponse {
 
 		$force_update = $requestStack->getCurrentRequest()->get('force_update', true);
+		$render = $requestStack->getCurrentRequest()->get('render', true);
 
 		// checking if the volume exists
 		$volume = $volumeRepo->findOneBy(['idc' => $idc]);
+		if(empty($volume) && $add) {
+			$volume = new Volume();
+			$volume->setDateAdded(new DateTime());
+		}
 		if(empty($volume)) {
 			// if not, we return an error
 			return new JsonResponse([
@@ -177,7 +188,8 @@ class VolumeController extends AbstractController {
 					'start_year' => $volume->getStartYear(),
 					'date_added' => $volume->getDateAdded()->format('Y-m-d H:i:s'),
 					'date_updated' => $volume->getDateUpdated()->format('Y-m-d H:i:s'),
-					'url' => "https://comicvine.gamespot.com/publisher/4050-{$volume->getIdc()}/"
+					'url' => "https://comicvine.gamespot.com/publisher/4050-{$volume->getIdc()}/",
+					'html' => $this->renderVolume($volume, $render),
 				],
 			]);
 		}
@@ -269,6 +281,7 @@ class VolumeController extends AbstractController {
 			'status' => 'success',
 			'message' => 'The volume has been updated',
 			'volume' => [
+				'id' => $volume->getId(),
 				'idc' => $volume->getIdc(),
 				'name' => $volume->getName(),
 				'description' => $volume->getDescription(),
@@ -300,7 +313,8 @@ class VolumeController extends AbstractController {
 				'start_year' => $volume->getStartYear(),
 				'date_added' => $volume->getDateAdded()->format('Y-m-d H:i:s'),
 				'date_updated' => $volume->getDateUpdated()->format('Y-m-d H:i:s'),
-				'url' => "https://comicvine.gamespot.com/volume/4050-{$volume->getIdc()}/"
+				'url' => "https://comicvine.gamespot.com/volume/4050-{$volume->getIdc()}/",
+				'html' => $this->renderVolume($volume, $render),
 			],
 		]);
 
@@ -395,5 +409,15 @@ class VolumeController extends AbstractController {
 								  string           $n
 	): JsonResponse {
 		return $this->ignoreIssue($doctrine, $volumeRepo, $issueRepo, $id, $n, false);
+	}
+
+	private function renderVolume(Volume $volume, string $render = ''): string {
+		if($render === 'home') {
+			return $this->renderView('volume/volume.html.twig', [
+				'volume' => $volume,
+				'display' => '',
+			]);
+		}
+		return '';
 	}
 }

@@ -149,7 +149,7 @@ ul.results {
 
 ul.results li.result {
 	@apply flex flex-nowrap items-center;
-	@apply h-16 p-1;
+	@apply h-16 p-1 w-full;
 }
 
 ul.results li.result .result-image {
@@ -167,6 +167,18 @@ ul.results li.result .result-info {
 	@apply flex flex-col flex-nowrap justify-center;
 	@apply h-full;
 	@apply text-sm;
+}
+
+ul.results li.result .result-badges {
+	@apply h-full flex-grow-0 ml-auto;
+	/*@apply w-1/12;*/
+	@apply px-2;
+	@apply flex items-center content-center;
+}
+
+ul.results li.result .result-badges svg,
+ul.results li.result .result-badges i {
+	@apply cursor-pointer;
 }
 
 /*.tmp {*/

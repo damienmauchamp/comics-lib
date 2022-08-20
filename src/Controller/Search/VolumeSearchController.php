@@ -103,6 +103,7 @@ class VolumeSearchController extends SearchController {
 				'publisher' => $volume ? $volume->getPublisher() : $publisher,
 				'publisher_name' => $volume ? $volume?->getPublisher()?->getName() : ($publisher ? $publisher['name'] : null),
 				'number_issues' => $result['count_of_issues'],
+				'type' => 'volume',
 				'html' => '',
 				'added' => $volume !== null,
 //				'volume' => $volume,

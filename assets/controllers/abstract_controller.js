@@ -12,6 +12,30 @@ export default class extends Controller {
 		return !!document.querySelector('section#nextToReadStarted');
 	}
 
+	ajax(method, url, data = {}) {
+		return new Promise((resolve, reject) => {
+			$.ajax({
+				url: url,
+				type: method,
+				data: data,
+				success: function (data) {
+					resolve(data)
+				},
+				error: function (error) {
+					reject(error)
+				},
+			})
+		})
+	}
+
+	get(url) {
+		return this.ajax('GET', url);
+	}
+
+	post(url, data) {
+		return this.ajax('POST', url, data);
+	}
+
 	/** HOMEPAGE */
 
 	/**

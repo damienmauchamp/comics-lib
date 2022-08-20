@@ -1,4 +1,10 @@
-<li class="result">
+<li class="result"
+		{{ stimulus_target('search', 'volume') }}
+		{{ stimulus_action('click->search', data.type) }}
+		data-added="{{ data.added ? '1' : '0' }}"
+		data-type="{{ data.type }}"
+		data-id="{{ data.id }}"
+		data-idc="{{ data.idc }}">
 	<img class="result-image"
 			src="{{ data.image }}"
 			alt="{{ data.full_name }}">
@@ -10,6 +16,11 @@
 	</div>
 
 	<div class="result-badges">
-		<div class="result-{{ data.added ? 'added' : 'add' }}"></div>
+		<i class="fa fa-{{ data.added ? 'check-circle' : 'plus-circle' }}"
+				data-type="{{ data.type }}"
+				data-id="{{ data.id }}"
+				data-idc="{{ data.idc }}"
+				{{ stimulus_action('click->search', data.added ? 'see' : 'add') }}></i>
+		{#        <div class="result-{{ data.added ? 'added' : 'add' }}"></div> #}
 	</div>
 </li>
