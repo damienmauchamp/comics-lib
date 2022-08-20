@@ -273,4 +273,8 @@ class Volume {
 		return $this->number_of_issues_read / $this->number_issues * 100;
 	}
 
+	public function getFullName(): string {
+		return $this->getName().($this->start_year ? " ({$this->start_year})" : '');
+	}
+
 }

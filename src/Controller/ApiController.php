@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Controller\Tests;
+namespace App\Controller;
 
 use App\Service\APIService;
 use JetBrains\PhpStorm\NoReturn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ApiTestController extends AbstractController {
+class ApiController extends AbstractController {
 	#[Route('/api/test', name: 'app_api_test')]
 	public function index(APIService $api): Response {
 //
@@ -43,17 +44,19 @@ class ApiTestController extends AbstractController {
 		]);
 	}
 
-	#[NoReturn] #[Route('/api/search-volume/{name}/{page<\d+>?1}', name: 'app_api_search_volume')]
+	#[Route('/api/search-volume/{name}/{page<\d+>?1}', name: 'app_api_search_volume')]
 	public function searchVolume(APIService $api,
 								 string     $name,
-								 int        $page): void {
+								 int        $page): JsonResponse {
+
+		//
 		$res = $api->searchVolume($name, $page);
-//		$res = $api->volumes($name, $page);
-		dd($res, [
-			'info' => 'SEARCH VOLUMES',
-			'name' => $name,
-			'page' => $page,
-		]);
+//		dd($res, [
+//			'info' => 'SEARCH VOLUMES',
+//			'name' => $name,
+//			'page' => $page,
+//		]);
+		return new JsonResponse($res);
 	}
 
 	#[NoReturn] #[Route('/api/search-issue/{name}/{page<\d+>?1}', name: 'app_api_search_issue')]

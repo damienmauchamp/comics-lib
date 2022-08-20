@@ -1,15 +1,15 @@
 <li class="result">
 	<img class="result-image"
-			src="https://comicvine.gamespot.com/a/uploads/original/6/67663/5573660-12.jpg"
-			alt="Batman : Damian Wayne (2055)">
+			src="{{ data.image }}"
+			alt="{{ data.full_name }}">
 
 	<div class="result-info">
-		<div class="result-name">Batman : Damian Wayne <span class="result-year">(2055)</span></div>
-		<div class="result-issues">67 issues</div>
-		<div class="result-publisher">DC Comics</div>
+		<div class="result-name">{{ data.name }} <span class="result-year">({{ data.year }})</span></div>
+		<div class="result-issues">{{ data.number_issues }} issue{{ data.number_issues > 1 ? 's' : '' }}</div>
+		<div class="result-publisher">{{ data.publisher_name }}</div>
 	</div>
 
 	<div class="result-badges">
-
+		<div class="result-{{ data.added ? 'added' : 'add' }}"></div>
 	</div>
 </li>

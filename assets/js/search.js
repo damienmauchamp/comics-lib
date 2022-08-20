@@ -230,12 +230,69 @@ window.onload = () => {
 	});
 
 	// focusing the input
-	searchBar.input.addEventListener('input', function (e) {
+	// tmp
+	function delay(fn, ms) {
+		let timer = 0
+		return function (...args) {
+			clearTimeout(timer)
+			timer = setTimeout(fn.bind(this, ...args), ms || 0)
+		}
+	}
 
-		console.log('search', e.target.value);
+	// function debounce(func, wait, immediate) {
+	// 	var timeout;
+	// 	return function () {
+	// 		var context = this, args = arguments;
+	// 		var later = function () {
+	// 			timeout = null;
+	// 			if (!immediate) func.apply(context, args);
+	// 		};
+	// 		var callNow = immediate && !timeout;
+	// 		clearTimeout(timeout);
+	// 		timeout = setTimeout(later, wait);
+	// 		if (callNow) func.apply(context, args);
+	// 	};
+	// };
 
-		// searchBar.results.innerHTML = '';
-	});
+	const search = (term) => {
+
+		if (!term.length) {
+			searchBar.results.innerHTML = '';
+			return false;
+		}
+
+		// fetching the results
+		console.log('Search:', term);
+		fetch(`search/api/volume?q=${term}`)
+			.then(response => response.json())
+			.then(data => {
+				console.log('data', data);
+				searchBar.results.innerHTML = '';
+				data.forEach(item => {
+					searchBar.results.innerHTML += item.html;
+				});
+			})
+			.catch(error => {
+				console.log('error', error);
+			});
+	}
+
+	// searchBar.input.addEventListener('keyup', function (e) {
+	//
+	// 	console.log('type:', e.target.value);
+	// 	debounce(search, 500)(e.target.value);
+	//
+	// 	// delay((e) => search(e.target.value), 500)(e);
+	//
+	//
+	// 	// debounce(function () {
+	//
+	// 	// searchBar.results.innerHTML = '';
+	// });
+
+	searchBar.input.addEventListener('keyup', delay(function (e) {
+		search(e.target.value);
+	}, 500));
 
 	// bluring the input
 	// searchBar.input.addEventListener('blur', function (e) {
