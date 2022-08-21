@@ -47,7 +47,7 @@ class VolumeSearchController extends SearchController {
 			$year_from,
 			$year_to,
 			$ignored,
-			$this->page, $this->limit, $this->sort, $this->order);
+			$this->page, $this->limit, $this->sort, $this->order, true);
 
 		$results = [];
 		foreach($volumes as $volume) {

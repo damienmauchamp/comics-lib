@@ -49,11 +49,28 @@ class VolumeRepository extends ServiceEntityRepository {
 									 ?int       $page = null,
 									 ?int       $limit = null,
 									 ?string    $order_by = 'start_year',
-									 ?string    $order = 'ASC'): array {
+									 ?string    $order = 'ASC',
+									 bool       $retry = false,
+									 bool       $retrying = false): array {
 
-		$query = $this->createQueryBuilder('v')
-			->where('v.name LIKE :name')
-			->setParameter('name', '%'.$name.'%');
+		$query = $this->createQueryBuilder('v');
+
+		if(!$retrying) {
+			$query->where('v.name LIKE :name')
+				->setParameter('name', '%'.$name.'%');
+		}
+		else {
+			// searching for every words
+			$words = explode(' ', $name);
+//			$string = array_map(function ($word, $i) {
+//				return "v.name LIKE :word_{$i}";
+//			}, $words, array_keys($words));
+//			$query->orWhere('('.implode(' AND ', $string).')');
+			foreach($words as $i => $word) {
+				$query->andWhere("v.name LIKE :word_{$i}")
+					->setParameter("word_{$i}", '%'.$word.'%');
+			}
+		}
 
 		if($idc !== null) {
 			$query->andWhere('v.idc = :idc')
@@ -88,9 +105,12 @@ class VolumeRepository extends ServiceEntityRepository {
 			$query->orderBy('v.'.$order_by, $order);
 		}
 
-		return $query->getQuery()->getResult();
-
-
+		$results = $query->getQuery()->getResult();
+		if($results || $retrying || !$retry) {
+			return $results;
+		}
+		return $this->findByAttributes($name, $idc, $publisher, $year_from, $year_to, $ignored, $page, $limit, $order_by, $order,
+			false, true);
 	}
 
 	public function findNextToReadVolumes(bool    $started = null,
