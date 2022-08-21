@@ -15,6 +15,7 @@ window.onload = () => {
 			input: document.querySelector('#search-bar input'),
 			cancelButton: document.querySelector('#search-bar button.cancel'),
 			collectionFilters: document.querySelectorAll('#search-filters .search-filter'),
+			resultsContainer: document.querySelector('#search-results'),
 			results: document.querySelector('#search-results ul.results'),
 			isOpen: () => {
 				return searchBar.bar.classList.contains('open');
@@ -259,6 +260,7 @@ window.onload = () => {
 
 		if (!term.length) {
 			searchBar.results.innerHTML = '';
+			searchBar.resultsContainer.classList.toggle('loading', false);
 			return false;
 		}
 
@@ -268,6 +270,9 @@ window.onload = () => {
 
 		const type = filterValue === 'library' ? 'library' : 'api';
 
+		// loading
+		searchBar.resultsContainer.classList.toggle('loading', true);
+
 		// fetching the results
 		console.log('Search:', term);
 		console.log('Type:', type);
@@ -276,6 +281,7 @@ window.onload = () => {
 			.then(data => {
 				console.log('data', data);
 				searchBar.results.innerHTML = '';
+				searchBar.resultsContainer.classList.toggle('loading', false);
 				data.forEach(item => {
 					searchBar.results.innerHTML += item.html;
 				});
@@ -327,6 +333,8 @@ window.onload = () => {
 			// triggering the search & clearing the results
 			searchBar.results.innerHTML = '';
 			searchBar.input.dispatchEvent(new Event('keyup'));
+			// focus the input
+			searchBar.input.focus();
 		});
 	});
 }

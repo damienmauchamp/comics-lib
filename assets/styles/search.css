@@ -121,6 +121,16 @@ body.searching .main {
 }
 
 
+#search-loader {
+	@apply items-center justify-center py-6 text-2xl;
+	@apply hidden;
+}
+
+#search-results.loading #search-loader {
+	@apply flex;
+}
+
+
 #search-results {
 	@apply opacity-0 transition-search-bar-opacity;
 	@apply h-0;
