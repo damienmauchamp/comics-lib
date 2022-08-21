@@ -1,4 +1,9 @@
 /** @type {import('tailwindcss').Config} */
+
+const navBottom = {
+	height: '45px'
+}
+
 module.exports = {
 	content: ['./templates/**/*.html.twig'],
 	theme: {
@@ -14,6 +19,12 @@ module.exports = {
 			boxShadow: {},
 			fontFamily: {},
 			fontSize: {},
+			height: {
+				'nav-bottom': navBottom.height,
+			},
+			margin: {
+				'nav-bottom': navBottom.height,
+			},
 			transitionProperty: {
 				'search-bar': 'height .6s ease',
 				'search-bar-width': 'width .6s',
@@ -45,5 +56,7 @@ module.exports = {
 			}
 		},
 	},
-	plugins: [],
+	plugins: [
+		require('tailwindcss-safe-area')
+	],
 }

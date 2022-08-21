@@ -6,6 +6,9 @@ window.onload = () => {
 // let simulated = false;
 	let test = false;
 
+	// fa-magnifying-glass = document.querySelector('.fa-magnifying-glass');
+	// fa-magnifying-glass =
+
 // const element = document;
 	const element = document.querySelector('main'),
 		searchBar = {
@@ -27,7 +30,8 @@ window.onload = () => {
 		barData = {
 			// maxHeight: searchBar.container.offsetHeight + searchBar.input.offsetHeight,
 			maxHeight: null,
-		};
+		},
+		navSearchButton = document.querySelector('nav.bottom .nav-items a#nav-search');
 
 	console.log('loaded')
 	barData.maxHeight = searchBar.container.offsetHeight + searchBar.input.offsetHeight;
@@ -137,9 +141,9 @@ window.onload = () => {
 		let barHeight = searchBar.bar.offsetHeight;
 
 		let isOpened = searchBar.bar.classList.contains('open');
-
-		console.log('touchend', 'barHeight:', barHeight, 'barData.maxHeight:', barData.maxHeight);
-		console.log('searchBar.bar.style.height', searchBar.bar.style.height)
+		//
+		// console.log('touchend', 'barHeight:', barHeight, 'barData.maxHeight:', barData.maxHeight);
+		// console.log('searchBar.bar.style.height', searchBar.bar.style.height)
 
 		// if (simulated) {
 		// 	simulated = false;
@@ -150,14 +154,14 @@ window.onload = () => {
 		// let divider = scrollData.direction === 'down' ? 2 : 3;
 		// down : closing
 		// up : opening
-		let aaaa = scrollData.direction === 'down' ?
+		let openClosePoint = scrollData.direction === 'down' ?
 			(barData.maxHeight * 2 / 3) : (barData.maxHeight / 2);
-		console.log('barHeight', barHeight)
-		console.log('scrollData.direction', scrollData.direction)
-		console.log('barData.maxHeight', barData.maxHeight)
-		console.log('aaaa', aaaa)
+		// console.log('barHeight', barHeight)
+		// console.log('scrollData.direction', scrollData.direction)
+		// console.log('barData.maxHeight', barData.maxHeight)
+		// console.log('openClosePoint', openClosePoint)
 
-		if (barHeight > aaaa) {
+		if (barHeight > openClosePoint) {
 			console.log('OPEN');
 			searchBar.bar.classList.toggle('open', true);
 			// if (!test) {
@@ -336,5 +340,28 @@ window.onload = () => {
 			// focus the input
 			searchBar.input.focus();
 		});
+	});
+
+	// clicking on the "Search" button
+	navSearchButton.addEventListener('click', function (e) {
+		// if there's a search bar, we open it
+		// if (searchBar.bar.classList.contains('open')) {
+		// 	searchBar.bar.classList.toggle('open', false);
+		// 	searchBar.input.value = '';
+		// 	searchBar.results.innerHTML = '';
+		// 	searchBar.resultsContainer.classList.toggle('loading', false);
+		// }
+
+		try {
+			searchBar.bar.classList.toggle('open', true);
+			$(element).stop().animate({scrollTop: 0});
+			$(searchBar.bar).animate({
+				height: barData.maxHeight,
+			});
+			searchBar.input.focus();
+			searchBar.input.dispatchEvent(new Event('keyup'));
+		} catch (e) {
+			console.log(e);
+		}
 	});
 }

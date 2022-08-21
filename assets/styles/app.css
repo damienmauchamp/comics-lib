@@ -22,6 +22,8 @@ nav {
 main {
 	@apply overflow-y-auto;
 	@apply w-full;
+
+	@apply mb-nav-bottom;
 }
 
 /**/
@@ -36,15 +38,46 @@ h3 {
 
 /**/
 
-nav,
+nav.top,
 main,
 .main {
 	height: auto;
 }
 
-nav {
+nav.top {
 	@apply w-[250px] shrink-0;
-	@apply tablet:hidden;
+	@apply max-tablet:hidden;
 	@apply border-r-[1px];
 	background-color: darkgray;
+}
+
+/**/
+
+nav.bottom {
+	@apply hidden max-tablet:flex flex-col items-stretch shrink-0;
+	@apply fixed bottom-0 left-0 right-0 top-[auto];
+
+	@apply bottom-0;
+	@apply pb-safe;
+
+	@apply h-nav-bottom;
+
+	@apply z-50 select-none;
+
+	background: white;
+	border-color: lightgray;
+}
+
+nav.bottom ul.nav-items {
+	@apply flex flex-row items-center relative shrink-0 h-full;
+	@apply border-t-[1px];
+}
+
+nav.bottom ul.nav-items li {
+	@apply flex flex-auto flex-col h-full justify-center items-center content-center;
+}
+
+nav.bottom ul.nav-items li a {
+	@apply flex flex-auto h-full items-center;
+	@apply text-xl;
 }

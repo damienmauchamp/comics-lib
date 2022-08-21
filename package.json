@@ -25,6 +25,7 @@
 		"build": "encore production --progress"
 	},
 	"dependencies": {
-		"moment": "^2.29.3"
+		"moment": "^2.29.3",
+		"tailwindcss-safe-area": "^0.2.2"
 	}
 }

@@ -16,7 +16,7 @@
 	</head>
 	<body>
 
-		<nav>
+		<nav class="top">
 			<ul>
 				<li><a href="{{ path('home') }}">Home</a></li>
 				{#        <li><a href="{{ path('about') }}">About</a></li> #}
@@ -30,5 +30,32 @@
 				{% block body %}{% endblock %}
 			</div>
 		</main>
+
+		<nav class="bottom">
+			<ul class="nav-items">
+				<li>
+					<a href="{{ path('home') }}" title="Home">
+						<i class="fa fa-home"></i>
+					</a>
+				</li>
+				<li>
+					<a href="#" title="Comics">
+						<i class="fa fa-list"></i>
+					</a>
+				</li>
+				<li>
+					<a href="#" title="Collections">
+						<i class="fa fa-book"></i>
+					</a>
+				</li>
+				<li>
+					<a href="#" title="Search" id="nav-search">
+						<i class="fa fa-magnifying-glass"></i>
+					</a>
+				</li>
+				{#        <li><a href="{{ path('about') }}">About</a></li> #}
+				{#        <li><a href="{{ path('contact') }}">Contact</a></li> #}
+			</ul>
+		</nav>
 	</body>
 </html>
