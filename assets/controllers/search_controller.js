@@ -9,7 +9,7 @@ import Controller from './abstract_controller';
  */
 export default class extends Controller {
 
-	static targets = ['volume']
+	static targets = ['volume', 'collectionFilter']
 
 	connect() {
 		// this.element.textContent = 'Hello Stimulus! Edit me in assets/controllers/hello_controller.js';
@@ -17,6 +17,42 @@ export default class extends Controller {
 
 	openVolume(id) {
 		window.location.href = `/volume/${id}`;
+	}
+
+	replaceVolumeBadge(volume, type) {
+		const badge = volume.querySelector('.result-badges svg');
+
+		console.log('badge', badge)
+		console.log('volume', volume)
+
+		const ADDED = 'fa-circle-check',
+			LOADING = 'fa-circle-notch',
+			ERROR = 'fa-times-circle';
+
+		let className = '',
+			spin = false;
+		switch (type) {
+			case 'added':
+				className = ADDED;
+				break;
+			case 'loading':
+				className = LOADING;
+				spin = true;
+				break;
+			case 'error':
+				className = ERROR;
+				break;
+			default:
+				return false;
+		}
+
+		// removing old signs
+		badge.classList.remove(ADDED);
+		badge.classList.remove(LOADING);
+		badge.classList.remove(ERROR);
+		badge.classList.toggle('fa-spin', spin);
+		// adding class name
+		badge.classList.add(className);
 	}
 
 	setVolumeAsAdded(idc, id) {
@@ -28,11 +64,9 @@ export default class extends Controller {
 		volume.dataset.added = "1";
 		volume.dataset.id = id;
 
-		const badge = volume.querySelector('.result-badges svg');
-		badge.dataset.id = id;
-		badge.dataset.added = "1";
-		badge.classList.add('fa-circle-check');
-		badge.classList.remove('fa-plus-circle');
+		//
+		volume.classList.remove('loading');
+		this.replaceVolumeBadge(volume, 'added');
 	}
 
 	volume(event) {
@@ -54,7 +88,8 @@ export default class extends Controller {
 		const element = event.target;
 		const type = element.dataset.type,
 			idc = element.dataset.idc,
-			added = element.dataset.added;
+			added = element.dataset.added,
+			volume = this.volumeTargets.find(e => e.dataset.idc === idc);
 
 		if (!idc) {
 			return false;
@@ -64,6 +99,10 @@ export default class extends Controller {
 			// return this.see(event);
 			return true;
 		}
+
+		//
+		volume.classList.add('loading');
+		this.replaceVolumeBadge(volume, 'loading');
 
 		// adding
 		this.post(`/volume/${idc}/add`, {render: 'home'})

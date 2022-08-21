@@ -103,13 +103,13 @@ body.searching .main {
 
 #search-filters .search-filter {
 	@apply grow;
-	@apply bg-gray-600;
+	@apply bg-gray-200;
 	@apply h-6;
 	@apply rounded-lg;
 }
 
 #search-filters .search-filter.selected {
-	@apply bg-gray-200;
+	@apply bg-gray-600;
 }
 
 #search.focus #search-filters {

@@ -49,22 +49,46 @@ class VolumeSearchController extends SearchController {
 			$ignored,
 			$this->page, $this->limit, $this->sort, $this->order);
 
-		dd($volumes, [
-			'limit' => $this->limit,
-			'page' => $this->page,
-			'results' => count($volumes),
-		]);
+		$results = [];
+		foreach($volumes as $volume) {
+			$results[] = $this->renderVolumeArray($volume);
+		}
 
+//		dd($volumes, [
+//			'limit' => $this->limit,
+//			'page' => $this->page,
+//			'results' => count($volumes),
+//			'$results' => $results,
+//		]);
 
-		// todo : idc
-		// todo : publisher
-		// todo : name
-		// todo : start_year (between)
-		// todo : ignored (default: false)
+		return new JsonResponse($results);
+	}
 
-		return $this->render('search/volume_search/index.html.twig', [
-			'controller_name' => 'VolumeSearchController',
-		]);
+	private function renderVolumeArray(?Volume $volume,
+									   array   $result = []): array {
+
+		$publisher = $result['publisher'] ?? null;
+		$data = [
+			'id' => $volume?->getId(),
+			'idc' => $volume ? $volume->getIdc() : ($result['idc'] ?? $result['id']),
+			'name' => $volume ? $volume->getName() : $result['name'],
+			'full_name' => $volume ? $volume->getFullName() : $result['full_name'],
+			'year' => $volume ? $volume->getStartYear() : $result['start_year'],
+			'image' => $volume ? $volume->getImage() : $result['image']['original_url'],
+			'publisher' => $volume ? $volume->getPublisher() : $publisher,
+			'publisher_name' => $volume ? $volume?->getPublisher()?->getName() : ($publisher ? $publisher['name'] : null),
+			'number_issues' => $result && ($result['count_of_issues'] ?? false) ? $result['count_of_issues'] : ($volume?->getNumberIssues()),
+			'type' => 'volume',
+			'html' => '',
+			'added' => $volume !== null,
+//				'volume' => $volume,
+		];
+
+		$data['html'] = $this->render('search/search_result.html.twig', [
+			'data' => $data,
+		])->getContent();
+
+		return $data;
 	}
 
 	#[Route('/search/api/volume', name: 'app_search_api_volume')]
@@ -93,25 +117,29 @@ class VolumeSearchController extends SearchController {
 			$full_name = $result['name'].($result['start_year'] ? " ({$result['start_year']})" : '');
 
 			$volume = $volumeRepository->findOneBy(['idc' => $idc]);
-			$data = [
-				'id' => $volume?->getId(),
-				'idc' => $volume ? $volume->getIdc() : $idc,
-				'name' => $volume ? $volume->getName() : $result['name'],
-				'full_name' => $volume ? $volume->getFullName() : $full_name,
-				'year' => $volume ? $volume->getStartYear() : $result['start_year'],
-				'image' => $volume ? $volume->getImage() : $result['image']['original_url'],
-				'publisher' => $volume ? $volume->getPublisher() : $publisher,
-				'publisher_name' => $volume ? $volume?->getPublisher()?->getName() : ($publisher ? $publisher['name'] : null),
-				'number_issues' => $result['count_of_issues'],
-				'type' => 'volume',
-				'html' => '',
-				'added' => $volume !== null,
-//				'volume' => $volume,
-			];
+			//
+			$result['full_name'] = $full_name;
+			$data = $this->renderVolumeArray($volume, $result);
 
-			$data['html'] = $this->render('search/search_result.html.twig', [
-				'data' => $data,
-			])->getContent();
+//			$data = [
+//				'id' => $volume?->getId(),
+//				'idc' => $volume ? $volume->getIdc() : $idc,
+//				'name' => $volume ? $volume->getName() : $result['name'],
+//				'full_name' => $volume ? $volume->getFullName() : $full_name,
+//				'year' => $volume ? $volume->getStartYear() : $result['start_year'],
+//				'image' => $volume ? $volume->getImage() : $result['image']['original_url'],
+//				'publisher' => $volume ? $volume->getPublisher() : $publisher,
+//				'publisher_name' => $volume ? $volume?->getPublisher()?->getName() : ($publisher ? $publisher['name'] : null),
+//				'number_issues' => $result['count_of_issues'],
+//				'type' => 'volume',
+//				'html' => '',
+//				'added' => $volume !== null,
+////				'volume' => $volume,
+//			];
+//
+//			$data['html'] = $this->render('search/search_result.html.twig', [
+//				'data' => $data,
+//			])->getContent();
 
 			$results[] = $data;
 		}

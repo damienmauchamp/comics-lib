@@ -14,6 +14,7 @@ window.onload = () => {
 			container: document.querySelector('#search-bar-container'),
 			input: document.querySelector('#search-bar input'),
 			cancelButton: document.querySelector('#search-bar button.cancel'),
+			collectionFilters: document.querySelectorAll('#search-filters .search-filter'),
 			results: document.querySelector('#search-results ul.results'),
 			isOpen: () => {
 				return searchBar.bar.classList.contains('open');
@@ -261,9 +262,16 @@ window.onload = () => {
 			return false;
 		}
 
+		// filters
+		const filter = Array.from(searchBar.collectionFilters).find(e => e.classList.contains('selected')),
+			filterValue = filter.getAttribute('data-value');
+
+		const type = filterValue === 'library' ? 'library' : 'api';
+
 		// fetching the results
 		console.log('Search:', term);
-		fetch(`search/api/volume?q=${term}`)
+		console.log('Type:', type);
+		fetch(`search/${type}/volume?q=${term}`)
 			.then(response => response.json())
 			.then(data => {
 				console.log('data', data);
@@ -308,8 +316,17 @@ window.onload = () => {
 		unFocusBar();
 	});
 
-	// searching
-}
+	// filters toggling
+	searchBar.collectionFilters.forEach(collectionFilter => {
+		collectionFilter.addEventListener('click', function (e) {
+			searchBar.collectionFilters.forEach(button => {
+				button.classList.toggle('selected', false);
+			});
+			this.classList.toggle('selected', true);
 
-// searchBar
-// bar
+			// triggering the search & clearing the results
+			searchBar.results.innerHTML = '';
+			searchBar.input.dispatchEvent(new Event('keyup'));
+		});
+	});
+}

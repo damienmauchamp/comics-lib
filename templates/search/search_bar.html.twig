@@ -1,4 +1,4 @@
-<div id="search">
+<div id="search" {{ stimulus_controller('search') }}>
 	<div id="search-bar">
 
 		<div id="search-bar-container">
@@ -22,15 +22,21 @@
 	</div>
 
 	<div id="search-filters" class="">
-		<div class="search-filter">
+		<div class="search-filter selected"
+				data-filter="collection"
+				data-value="search"
+				{{ stimulus_target('search', 'collectionFilter') }}>
 			Search
 		</div>
-		<div class="search-filter selected">
+		<div class="search-filter"
+				data-filter="collection"
+				data-value="library"
+				{{ stimulus_target('search', 'collectionFilter') }}>
 			Library
 		</div>
 	</div>
 
-	<div id="search-results" class="" {{ stimulus_controller('search') }}>
+	<div id="search-results" class="">
 
 		<ul class="results">
 
