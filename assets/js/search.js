@@ -17,6 +17,8 @@ window.onload = () => {
 			container: document.querySelector('#search-bar-container'),
 			input: document.querySelector('#search-bar input'),
 			cancelButton: document.querySelector('#search-bar button.cancel'),
+			submitButton: document.querySelector('#search-bar button#search-submit'),
+			resetButton: document.querySelector('#search-bar button#search-reset'),
 			collectionFilters: document.querySelectorAll('#search-filters .search-filter'),
 			resultsContainer: document.querySelector('#search-results'),
 			results: document.querySelector('#search-results ul.results'),
@@ -36,6 +38,7 @@ window.onload = () => {
 	console.log('loaded')
 	barData.maxHeight = searchBar.container.offsetHeight + searchBar.input.offsetHeight;
 
+	const animationSpeed = 200;
 	element.addEventListener("touchstart", function (e) {
 		scrollEvent = e;
 		scrollData = {
@@ -44,6 +47,7 @@ window.onload = () => {
 			containerHeight: searchBar.container.offsetHeight,
 			inputHeight: searchBar.input.offsetHeight,
 			direction: null,
+			delta: null,
 			target: e.target,
 			continue: !$(e.target).closest('#search').length,
 		};
@@ -68,8 +72,21 @@ window.onload = () => {
 		console.log('currentScrollTop:', currentScrollTop);
 		console.log('scrollData:', scrollData);
 		console.log('delta:', delta, direction);
+		console.log('scrollData.delta:', scrollData.delta, scrollData.direction);
 
+		let changementDirection = scrollData.delta !== null ? (
+			direction === 'up' && delta < scrollData.delta ||
+			direction === 'down' && delta > scrollData.delta) : false;
+		if (changementDirection) {
+			// todo changement de direction
+			console.log('changementDirection!!!!!!!!!!!!!');
+			console.log('changementDirection!!!!!!!!!!!!!');
+			console.log('changementDirection!!!!!!!!!!!!!');
+			console.log('changementDirection!!!!!!!!!!!!!');
+			console.log('changementDirection!!!!!!!!!!!!!');
+		}
 		scrollData.direction = direction;
+		scrollData.delta = delta;
 
 		// DOWN
 		if (direction === 'down') {
@@ -113,6 +130,9 @@ window.onload = () => {
 				// searchBar.bar.style.height = `${barTotalHeight - delta}px`;
 				searchBar.bar.style.height = `${delta}px`;
 				console.log('NOUVELLE HAUTEUR:', delta);
+			} else if (delta > barData.maxHeight) {
+				console.log('ON DÉPASSE')
+				return true;
 			}
 
 			// console.log('Move delta:', direction, delta)
@@ -168,7 +188,7 @@ window.onload = () => {
 
 			if (currentScrollTop < barData.maxHeight) {
 				// element.scrollTop = 0;
-				$(element).stop().animate({scrollTop: 0});
+				$(element).stop().animate({scrollTop: 0}, animationSpeed);
 			} else {
 				console.log('nope bloquée ?', {
 					currentScrollTop: currentScrollTop,
@@ -179,7 +199,7 @@ window.onload = () => {
 			// searchBar.bar.style.height = `${barData.maxHeight}px`;
 			$(searchBar.bar).animate({
 				height: barData.maxHeight,
-			});
+			}, animationSpeed);
 
 			// }
 			// element.scrollTop = 0;
@@ -196,13 +216,13 @@ window.onload = () => {
 			// searchBar.bar.style.height = 0;
 			$(searchBar.bar).animate({
 				height: 0,
-			});
+			}, animationSpeed);
 
 			unFocusBar();
 
 			if (isOpened && currentScrollTop < barData.maxHeight) {
 				// element.scrollTop = 0;
-				$(element).stop().animate({scrollTop: 0});
+				$(element).stop().animate({scrollTop: 0}, animationSpeed);
 			} else if (isOpened) {
 				console.log('barData.maxHeight', barData.maxHeight);
 				console.log('currentScrollTop', currentScrollTop);
@@ -265,6 +285,9 @@ window.onload = () => {
 		if (!term.length) {
 			searchBar.results.innerHTML = '';
 			searchBar.resultsContainer.classList.toggle('loading', false);
+
+			// // search-reset
+			// searchBar.resetButton.classList.toggle('hasValue', false);
 			return false;
 		}
 
@@ -276,6 +299,9 @@ window.onload = () => {
 
 		// loading
 		searchBar.resultsContainer.classList.toggle('loading', true);
+
+		// // search-reset
+		// searchBar.resetButton.classList.toggle('hasValue', true);
 
 		// fetching the results
 		console.log('Search:', term);
@@ -308,6 +334,10 @@ window.onload = () => {
 	// 	// searchBar.results.innerHTML = '';
 	// });
 
+	searchBar.input.addEventListener('input', function (e) {
+		// search-reset
+		searchBar.resetButton.classList.toggle('hasValue', e.target.value.length > 0);
+	});
 	searchBar.input.addEventListener('keyup', delay(function (e) {
 		search(e.target.value);
 	}, 500));
@@ -321,10 +351,20 @@ window.onload = () => {
 	// 	unFocusBar();
 	// });
 
+	// clicking on the "Reset" button
+	const resetSearch = () => {
+		console.log('resetSearch')
+		searchBar.input.value = '';
+		searchBar.input.dispatchEvent(new Event('keyup'));
+		search('');
+	}
+	searchBar.resetButton.addEventListener('click', resetSearch);
+	searchBar.resetButton.addEventListener('touchend', resetSearch);
+
 	// clicking on the "Cancel" button
 	searchBar.cancelButton.addEventListener('click', function (e) {
 		unFocusBar();
-	});
+	}, false);
 
 	// filters toggling
 	searchBar.collectionFilters.forEach(collectionFilter => {
@@ -354,10 +394,10 @@ window.onload = () => {
 
 		try {
 			searchBar.bar.classList.toggle('open', true);
-			$(element).stop().animate({scrollTop: 0});
+			$(element).stop().animate({scrollTop: 0}, animationSpeed);
 			$(searchBar.bar).animate({
 				height: barData.maxHeight,
-			});
+			}, animationSpeed);
 			searchBar.input.focus();
 			searchBar.input.dispatchEvent(new Event('keyup'));
 		} catch (e) {

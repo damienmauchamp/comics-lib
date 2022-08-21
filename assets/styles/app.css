@@ -8,7 +8,7 @@ html, body {
 }
 
 html, body, .main {
-	background-color: lightgray;
+	@apply bg-background;
 }
 
 body {

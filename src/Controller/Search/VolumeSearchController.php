@@ -65,7 +65,12 @@ class VolumeSearchController extends SearchController {
 	}
 
 	private function renderVolumeArray(?Volume $volume,
-									   array   $result = []): array {
+									   array   $result = [],
+									   string  $img = 'scale_small'): array {
+
+		$image = $volume ? $volume->getImage() : $result['image'][$img] ??
+			$result['image']['thumb_url'] ??
+			$result['image']['original_url'];
 
 		$publisher = $result['publisher'] ?? null;
 		$data = [
@@ -74,7 +79,7 @@ class VolumeSearchController extends SearchController {
 			'name' => $volume ? $volume->getName() : $result['name'],
 			'full_name' => $volume ? $volume->getFullName() : $result['full_name'],
 			'year' => $volume ? $volume->getStartYear() : $result['start_year'],
-			'image' => $volume ? $volume->getImage() : $result['image']['original_url'],
+			'image' => $image,
 			'publisher' => $volume ? $volume->getPublisher() : $publisher,
 			'publisher_name' => $volume ? $volume?->getPublisher()?->getName() : ($publisher ? $publisher['name'] : null),
 			'number_issues' => $result && ($result['count_of_issues'] ?? false) ? $result['count_of_issues'] : ($volume?->getNumberIssues()),

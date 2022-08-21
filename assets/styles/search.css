@@ -28,13 +28,14 @@ body.searching .main {
 #search-bar input#search {
 	/*@apply w-full;*/
 	@apply w-full max-h-full;
-	/*@apply */
+	/*@apply max-h-full;*/
+	/*@apply max-h-search-input;*/
+	@apply h-search-input tablet:h-search-input-mobile;
+	@apply tablet:rounded-search-input;
+	@apply p-input tablet:p-input-mobile;
 
-	/* tmp */
-	/*@apply h-[32px];*/
-	@apply max-h-[32px];
-
-	@apply transition-search-bar-width;
+	/*@apply transition-search-bar-width;*/
+	@apply bg-search-input-background;
 }
 
 #search-bar input#search::-webkit-input-placeholder {
@@ -46,12 +47,11 @@ body.searching .main {
 }
 
 #search-bar input#search.open {
-	/*@apply h-[32px];*/
-	/*@apply max-h-[32px];*/
 }
 
 #search.focus {
-	@apply min-h-[48px];
+	@apply bg-background;
+	@apply min-h-search-input;
 
 	@apply flex flex-col;
 	@apply absolute top-0 left-0 right-0 bottom-0;
@@ -62,16 +62,11 @@ body.searching .main {
 
 
 	/**/
-	@apply z-50;
+	@apply z-30;
 	@apply fixed top-0 w-full;
-
-	/* tmp */
-	background: lightgray;
 }
 
 #search.focus #search-bar {
-	/*@apply fixed top-0 left-0 right-0 z-50;*/
-	/*@apply mb-[48px];*/
 }
 
 #search.focus #search-bar #search-bar-container {
@@ -79,12 +74,47 @@ body.searching .main {
 }
 
 #search.focus #search-bar input#search {
+	/*@apply w-3/4;*/
+}
+
+#search #search-bar button#search-submit {
+	/* todo variables */
+	@apply absolute left-0 top-0;
+	@apply w-[40px] h-[44px];
+	@apply tablet:w-[30px] tablet:h-[36px];
+
+	background-size: 14px 14px;
+	background-repeat: no-repeat;
+	background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20id%3D%22stroked_search%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2215%22%20height%3D%2215%22%20viewBox%3D%220%200%2015%2015%22%20style%3D%22%22%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill%3A%20rgb%28136%2C136%2C136%29%7D%3C%2Fstyle%3E%3C%2Fdefs%3E%3Ctitle%3ESF_Pro_Form_Icons_v4f-Single-Set%3C%2Ftitle%3E%3Cpath%20id%3D%22stroked_search-2%22%20data-name%3D%22stroked_search%22%20fill%3D%22rgb%28136%2C136%2C136%29%22%20transform%3D%22translate%28-3%2C%20-15%29%22%20d%3D%22M18%2C29.293l-4.438-4.407C14.457%2C23.838%2C15%2C22.481%2C15%2C20.999C15%2C17.691%2C12.309%2C15%2C9%2C15%20%20%20s-6%2C2.691-6%2C5.999C3%2C24.308%2C5.691%2C27%2C9%2C27c1.467%2C0%2C2.811-0.531%2C3.854-1.408L17.293%2C30L18%2C29.293z%20M9%2C26c-2.762%2C0-5-2.241-5-5.001%20%20%20C4%2C18.238%2C6.238%2C16%2C9%2C16c2.761%2C0%2C5%2C2.238%2C5%2C4.999C14%2C23.759%2C11.761%2C26%2C9%2C26z%22%2F%3E%3C%2Fsvg%3E');
+	background-position: left 8px center;
+	/*@apply text-search-input-find;*/
+}
+
+#search #search-bar button#search-reset {
+	@apply absolute right-0 top-0 cursor-pointer block;
+	@apply w-[30px] h-full;
+	@apply text-search-input-reset;
+	@apply opacity-0;
+}
+
+#search #search-bar button#search-reset.hasValue {
+	@apply pointer-events-auto opacity-100;
+}
+
+#search #search-bar .search-bar-left {
+	@apply relative;
+	@apply w-full max-h-full;
+	@apply transition-search-bar-width;
+}
+
+#search.focus #search-bar .search-bar-left {
 	@apply w-3/4;
 }
 
 #search-bar button.cancel {
 	@apply opacity-0 w-0;
 	@apply transition-search-bar-width transition-search-bar-opacity;
+	@apply active:bg-transparent focus:bg-transparent;
 }
 
 #search.focus #search-bar button.cancel {
@@ -96,20 +126,25 @@ body.searching .main {
 	@apply opacity-0 transition-search-bar-opacity;
 	@apply h-0;
 	@apply flex flex-nowrap justify-evenly;
+	@apply bg-background;
+}
 
-	/* tmp */
-	background: lightgray;
+#search-filters #search-filters-container {
+	@apply flex flex-row w-full p-search-filter bg-search-filters-background;
+	@apply rounded-search-input;
+	@apply h-[27px];
 }
 
 #search-filters .search-filter {
 	@apply grow;
-	@apply bg-gray-200;
-	@apply h-6;
-	@apply rounded-lg;
+	@apply h-full w-1/2;
+	@apply rounded-search-filter;
+	@apply text-search-filters-color;
+	@apply transition-search-filters-font-weight;
 }
 
 #search-filters .search-filter.selected {
-	@apply bg-gray-600;
+	@apply bg-search-filters-background-selected font-semibold;
 }
 
 #search.focus #search-filters {
@@ -118,8 +153,12 @@ body.searching .main {
 }
 
 #search.focus #search-filters .search-filter {
+	@apply flex items-center justify-center text-sm;
 }
 
+#search:not(.focus) #search-filters {
+	@apply pointer-events-none;
+}
 
 #search-loader {
 	@apply items-center justify-center py-6 text-2xl;
@@ -141,7 +180,7 @@ body.searching .main {
 }
 
 #search.focus #search-results {
-	@apply opacity-100 z-50;
+	@apply opacity-100 z-20;
 	/*@apply h-[unset];*/
 }
 

@@ -3,13 +3,32 @@
 
 		<div id="search-bar-container">
 
-			<label for="search" class="hidden"></label>
-			<input type="text"
-					name="search"
-					id="search"
-					value="{{ search|default('') }}"
-					placeholder="Search..."
-			/>
+			<div class="search-bar-left">
+				<label for="search" class="hidden"></label>
+				<input type="text"
+						name="search"
+						id="search"
+						value="{{ search|default('') }}"
+						placeholder="Search..."
+				/>
+
+				{#  #}
+				<button id="search-submit"
+						class="search-submit"
+						{#                    type="submit" #}
+						disabled=""
+						aria-label="Submit Search"></button>
+
+				{# X #}
+				<button id="search-reset"
+						class="search-reset {{ search|default('')|length > 0 ? 'hasValue' : '' }}"
+						{#                    type="submit" #}
+						disabled=""
+						aria-label="Clear Search">
+					<i class="fa fa-circle-xmark"></i>
+				</button>
+			</div>
+
 
 			<button class="cancel">Cancel</button>
 
@@ -22,18 +41,24 @@
 	</div>
 
 	<div id="search-filters" class="">
-		<div class="search-filter selected"
-				data-filter="collection"
-				data-value="search"
-				{{ stimulus_target('search', 'collectionFilter') }}>
-			Search
+
+		<div id="search-filters-container" class="">
+
+			<div class="search-filter selected"
+					data-filter="collection"
+					data-value="search"
+					{{ stimulus_target('search', 'collectionFilter') }}>
+				Search
+			</div>
+			<div class="search-filter"
+					data-filter="collection"
+					data-value="library"
+					{{ stimulus_target('search', 'collectionFilter') }}>
+				Library
+			</div>
+
 		</div>
-		<div class="search-filter"
-				data-filter="collection"
-				data-value="library"
-				{{ stimulus_target('search', 'collectionFilter') }}>
-			Library
-		</div>
+
 	</div>
 
 	<div id="search-results" class="">
