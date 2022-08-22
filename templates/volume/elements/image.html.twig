@@ -1,11 +1,13 @@
 {% block image %}
 
+	{#    scale_small #}
+	{#    thumb_url #}
+	{#    original_url #}
+
 	{% set src = volume.image %}
 	{% set alt = volume.name %}
 
 	{% if display|default('VOLUME') is same as 'VOLUME' or volume.getNextToreadissue() == null %}
-
-		{# nothing #}
 
 	{% elseif display in ['NEXT_TO_READ', 'PROGRESS'] %}
 
@@ -14,7 +16,11 @@
 
 	{% endif %}
 
-	<img src="{{ src }}" alt="{{ alt }}"
+	{% if display not in ['PROGRESS'] %}
+		{% set src = src|replace({'original':'scale_small'}) %}
+	{% endif %}
+
+	<img data-display="{{ display }}" src="{{ src }}" alt="{{ alt }}"
 			loading="lazy"/>
 
 {% endblock %}

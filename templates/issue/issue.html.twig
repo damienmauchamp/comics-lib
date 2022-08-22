@@ -13,7 +13,7 @@
 
 		<a href="{{ path('app_issue', {id:issue.id}) }}">
 
-			<img src="{{ issue.image }}" alt="{{ issue.getIssueName() }}"
+			<img src="{{ issue.image|replace({'original':'scale_small'}) }}" alt="{{ issue.getIssueName() }}"
 					loading="lazy"/>
 			{#            {{ include('issue/elements/image.html.twig', {display:display|default('VOLUME'),issue:issue}) }} #}
 		</a>

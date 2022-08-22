@@ -70,13 +70,19 @@ export default class extends Controller {
 	}
 
 	volume(event) {
-		const element = event.target;
-		const type = element.dataset.type,
+		let element = event.target;
+		let type = element.dataset.type,
 			id = element.dataset.id,
 			idc = element.dataset.idc,
 			added = !!parseInt(element.dataset.added);
 
-		// const volume = this.volumeTargets.find(e => e.dataset.idc === idc);
+		if (idc === undefined) {
+			element = element.closest('.result'),
+				type = element.dataset.type,
+				id = element.dataset.id,
+				idc = element.dataset.idc,
+				added = !!parseInt(element.dataset.added);
+		}
 
 		if (!added) {
 			return false;
