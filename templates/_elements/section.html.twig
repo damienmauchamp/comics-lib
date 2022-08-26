@@ -1,0 +1,9 @@
+{% set type = type|default('volume') %}
+
+<section id="{{ section.id }}" class="{{ section.display|default('grid') }} {{ type }}s" {{ stimulus_controller( type) }}>
+	<h2>{{ section.title }}</h2>
+	
+	<div class="content {{ type }}s-list">
+		{% block elements %}{% endblock %}
+	</div>
+</section>

@@ -1,0 +1,9 @@
+{% set type = 'item' %}
+
+{% extends '_elements/section.html.twig' %}
+
+{% block elements %}
+	{% for item in items %}
+		{% include 'item/item.html.twig' with {item:item, display: display} %}
+	{% endfor %}
+{% endblock %}

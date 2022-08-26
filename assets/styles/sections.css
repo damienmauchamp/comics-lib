@@ -54,6 +54,10 @@ section.line > div {
 
 section.line.scroll > div {
 	@apply flex flex-nowrap overflow-x-auto;
+	/* margin fix */
+	@apply mx-0 !important;
+	margin-inline-start: 0.25rem;
+	margin-inline-end: 0.25rem;
 }
 
 section.side > div {

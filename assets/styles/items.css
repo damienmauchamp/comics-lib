@@ -89,6 +89,12 @@ section.line.scroll > div.content > div {
 	@apply mobile:basis-1/3;
 }
 
+section.line.scroll.items > div.content > div {
+	@apply basis-1/6;
+	/*@apply tablet:basis-1/6;*/
+	@apply mobile:basis-1/2;
+}
+
 section.line.scroll > div.content .volume-img,
 section.line.scroll > div.content .volume-details {
 	@apply shrink-0 grow-0;
