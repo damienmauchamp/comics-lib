@@ -113,6 +113,134 @@ class ItemRepository extends ServiceEntityRepository {
 		return $query->getQuery()->getResult();
 	}
 
+	public function findNextToReadItems(bool    $started = null,
+										bool    $ignored = false,
+										?int    $page = null,
+										?int    $limit = null,
+										string  $sort = 'last_read',
+										?string $order = 'DESC'): array {
+
+		$order_by = $sort === 'last_read' ? null : 'release_date';
+
+		// getting next to read items
+		$nextToReadItems = $this->findByAttributes(
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			$ignored,
+			$page,
+			$limit,
+			$order_by, $order);
+
+		// getting next to read issues of each item
+		$items = [];
+		foreach($nextToReadItems as $item) {
+			$itemIssues = $item->getIssues()->getValues();
+
+//			// setting the read issues
+			$item->setIssuesProgress();
+			// todo : isComplete
+
+			// checking if all the issues are read
+			$allRead = true;
+			$isStarted = false;
+			/** @var ItemIssue $itemIssue */
+			foreach($itemIssues as $itemIssue) {
+				$issueRead = $itemIssue->getIssue()->isRead();
+				$isStarted = $isStarted || $issueRead;
+				$allRead = $allRead && $issueRead;
+			}
+
+			if($allRead) {
+				continue;
+			}
+
+			if($started && !$isStarted) {
+				// if we only want started items and this item has no read issues
+				continue;
+			}
+
+			if($started === false && $isStarted) {
+				continue;
+			}
+
+			$items[] = $item;
+		}
+		return $items;
+
+	}
+
+	public function findUpToDateItems(?int    $limit = null,
+									  string  $sort = 'last_read',
+									  ?string $order = 'DESC'): array {
+
+//		$order_by = $sort === 'last_read' ? null : 'release_date';
+		$order_by = 'release_date';
+
+		// getting next to read volumes
+		$upToReadItems = $this->findByAttributes(
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			$limit,
+			$order_by, $order);
+
+		$items = [];
+		foreach($upToReadItems as $item) {
+			$itemIssues = $item->getIssues()->getValues();
+
+//			// setting the read issues
+			$item->setIssuesProgress();
+			// todo : isComplete
+
+			// checking if all the issues are read
+			$allRead = true;
+			$isStarted = false;
+			/** @var ItemIssue $itemIssue */
+			foreach($itemIssues as $itemIssue) {
+				$issueRead = $itemIssue->getIssue()->isRead();
+				$isStarted = $isStarted || $issueRead;
+				$allRead = $allRead && $issueRead;
+				if(!$allRead) {
+					break;
+				}
+			}
+
+			if(!$allRead) {
+				continue;
+			}
+
+			$items[] = $item;
+		}
+
+		if($sort === 'last_read') {
+			usort($items, function (Item $a, Item $b) {
+
+				// todo double-check
+				if(!$b->getLastReadIssue() && !$a->getLastReadIssue()) {
+					return $b->getReleaseDate() <=> $a->getReleaseDate();
+				}
+				else if(!$b->getLastReadIssue()) {
+					return 1;
+				}
+				else if(!$a->getLastReadIssue()) {
+					return -1;
+				}
+				return $b->getLastReadIssue()->getDateRead() <=> $a->getLastReadIssue()->getDateRead();
+			});
+		}
+
+		return $items;
+	}
+
 //    /**
 //     * @return Item[] Returns an array of Item objects
 //     */

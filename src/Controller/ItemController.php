@@ -42,9 +42,10 @@ class ItemController extends AbstractController {
 		if(!$item) {
 			throw $this->createNotFoundException('No item found for id '.$id);
 		}
+		$item->setIssuesProgress();
 
 		dd($item);
-		
+
 		return $this->render('item/index.html.twig', [
 			'controller_name' => 'ItemController',
 		]);
@@ -72,6 +73,7 @@ class ItemController extends AbstractController {
 
 		$force_update = $requestStack->getCurrentRequest()->get('force_update', true);
 
+		// todo : move
 		$imgFolder = 'images/';
 		$imgDir = $this->getParameter('kernel.project_dir').'/public/'.$imgFolder;
 		$imgItemDir = $imgDir.'items/';

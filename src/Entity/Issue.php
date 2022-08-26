@@ -50,6 +50,8 @@ class Issue {
 	#[ORM\Column(type: 'datetime', nullable: true)]
 	private $date_ignored;
 
+	private $position;
+
 	public function __construct() {
 		$this->items = new ArrayCollection();
 		$this->backups = new ArrayCollection();
@@ -220,5 +222,15 @@ class Issue {
 
 	public function getIssueName(): string {
 		return $this->getVolume()->getName().' #'.$this->getNumber();
+	}
+
+	public function setPosition(?int $position): self {
+		$this->position = $position;
+
+		return $this;
+	}
+
+	public function getPosition(): ?int {
+		return $this->position;
 	}
 }

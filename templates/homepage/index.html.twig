@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}HomepageController!{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block searchbar %}
 
@@ -11,9 +11,9 @@
 
 {% block body %}
 
-	<h1>VOLUMES</h1>
+	<h1>Volumes</h1>
 
-	{# display: ''|'line'|'list'|'grid' #}
+	{# display: ''|'line'|'line scroll'|'list'|'grid' #}
 
 	{% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadStarted, display:'NEXT_TO_READ', section: {
 		title: 'Next to Read',
@@ -35,6 +35,20 @@
 	{#        id: 'upToDate' #}
 	{#    }} %} #}
 
-	<h1>ITEMS</h1>
-	@todo
+	<h1>Items</h1>
+
+	{% include 'item/items.html.twig' with {items:items.nextToReadStarted, display:'NEXT_TO_READ', section: {
+		title: 'Read next',
+		description: 'Volumes that are not started yet',
+		id: 'nextToReadStartedItems',
+		display: 'line scroll',
+	}} %}
+
+	{% include 'item/items.html.twig' with {items:items.nextToReadNotStarted, display:'NEXT_TO_READ', section: {
+		title: 'Not started',
+		description: 'Volumes that are not started yet',
+		id: 'nextToReadNotStartedItems',
+		display: 'line scroll',
+	}} %}
+
 {% endblock %}

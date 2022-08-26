@@ -1,0 +1,42 @@
+{# {{ display=  }} #}
+{# {% set displat %} #}
+
+{% if wrap|default(true) %}
+
+<div class="item"
+		data-id="{{ item.id }}"
+
+		data-item-id="{{ item.id }}"
+
+		{% if controllers is defined %}
+			{% for controller in controllers %}
+				{{ stimulus_controller(controller.name) }}
+			{% endfor %}
+		{% endif %}
+
+
+		{{ stimulus_target('item', 'element') }}>
+
+	{% endif %}
+
+	<div class="item-img">
+
+		<a href="{{ path('app_item', {id:item.id}) }}">
+			{{ include('item/elements/image.html.twig', {display:display|default('ITEM'), item:item}) }}
+		</a>
+
+		<div class="progress">
+			<div class="progress-bar progress-bar-success {{ item.isDone() ? 'complete': 'uncomplete' }}" role="progressbar" aria-valuenow="{{ item.getProgress() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ item.getProgress() }}%">
+				{{ item.getProgress() }}%
+			</div>
+		</div>
+	</div>
+
+	<div class="item-details">
+		{{ include('item/elements/details.html.twig', {display:display|default('ITEM'), item:item}) }}
+	</div>
+	{#    #}{#    {{ dump((item)) }} #}
+
+	{% if wrap|default(true) %}
+</div>
+{% endif %}

@@ -1,0 +1,18 @@
+{% block image %}
+
+	{#    scale_small #}
+	{#    thumb_url #}
+	{#    original_url #}
+
+	{#    {% set src = asset('images/items/' ~ item.image ) %} #}
+	{% set src = asset(image_item_dir ~ item.image ) %}
+	{% set alt = item.getFullName() %}
+
+	{% if display not in ['PROGRESS'] %}
+		{% set src = src|replace({'original':'scale_small'}) %}
+	{% endif %}
+
+	<img data-display="{{ display }}" src="{{ src }}" alt="{{ alt }}"
+			loading="lazy"/>
+
+{% endblock %}

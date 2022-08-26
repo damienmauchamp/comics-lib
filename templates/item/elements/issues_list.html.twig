@@ -1,0 +1,21 @@
+{% block issuesList %}
+
+	{{ dump(item.getNextToReadIssues()) }}
+
+	<ul class="item-issues">
+		{% for issue in item.getNextToReadIssues() %}
+
+			{# todo : opacity-50 => class #}
+			<li class="item-issue {{ issue.isRead() ? 'opacity-50' : '' }}">
+				<div class="item-issue-number">{{ issue.getPosition() }}</div>
+				<div class="item-issue-name">{{ issue.getIssueName() }}
+					<span class="item-issue-title">{{ issue.getName() }}</span></div>
+				<div class="item-issue-read">
+					<i class="fa fa-circle-check"></i>
+				</div>
+			</li>
+
+		{% endfor %}
+	</ul>
+
+{% endblock %}

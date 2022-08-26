@@ -23,7 +23,7 @@ main {
 	@apply overflow-y-auto;
 	@apply w-full;
 
-	@apply mb-nav-bottom;
+	@apply tablet:mb-nav-bottom;
 }
 
 /**/
