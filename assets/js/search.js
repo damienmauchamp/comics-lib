@@ -38,7 +38,7 @@ window.onload = () => {
 	console.log('loaded')
 	barData.maxHeight = searchBar.container.offsetHeight + searchBar.input.offsetHeight;
 
-	const animationSpeed = 200;
+	const animationSpeed = 300;
 	element.addEventListener("touchstart", function (e) {
 		scrollEvent = e;
 		scrollData = {
@@ -47,6 +47,7 @@ window.onload = () => {
 			containerHeight: searchBar.container.offsetHeight,
 			inputHeight: searchBar.input.offsetHeight,
 			direction: null,
+			oldDirection: null,
 			delta: null,
 			target: e.target,
 			continue: !$(e.target).closest('#search').length,
@@ -72,19 +73,34 @@ window.onload = () => {
 		console.log('currentScrollTop:', currentScrollTop);
 		console.log('scrollData:', scrollData);
 		console.log('delta:', delta, direction);
-		console.log('scrollData.delta:', scrollData.delta, scrollData.direction);
+		console.log('scrollData.delta:', scrollData.delta);
+		console.log('direction:', direction);
+		console.log('scrollData.direction:', scrollData.direction);
+		console.log('CURRENT HEIGHT:', searchBar.bar.style.height);
+		console.log('scrollData.oldDirection:', scrollData.oldDirection);
 
 		let changementDirection = scrollData.delta !== null ? (
 			direction === 'up' && delta < scrollData.delta ||
 			direction === 'down' && delta > scrollData.delta) : false;
-		if (changementDirection) {
-			// todo changement de direction
-			console.log('changementDirection!!!!!!!!!!!!!');
-			console.log('changementDirection!!!!!!!!!!!!!');
-			console.log('changementDirection!!!!!!!!!!!!!');
-			console.log('changementDirection!!!!!!!!!!!!!');
-			console.log('changementDirection!!!!!!!!!!!!!');
-		}
+		//
+		// if (scrollData.oldDirection) {
+		// 	console.log('Il y a eu un changement');
+		// }
+		//
+		// if (changementDirection) {
+		// 	// todo changement de direction
+		// 	console.log('changementDirection!!!!!!!!!!!!!');
+		// 	console.log('changementDirection!!!!!!!!!!!!!');
+		// 	console.log('changementDirection!!!!!!!!!!!!!');
+		//
+		// 	scrollData.oldDirection = direction;
+		// 	direction = direction === 'up' ? 'down' : 'up';
+		// 	console.log('NEW direction:', direction);
+		//
+		// 	console.log('changementDirection!!!!!!!!!!!!!');
+		// 	console.log('changementDirection!!!!!!!!!!!!!');
+		// 	console.log('changementDirection!!!!!!!!!!!!!');
+		// }
 		scrollData.direction = direction;
 		scrollData.delta = delta;
 
@@ -95,8 +111,12 @@ window.onload = () => {
 
 			let newHeight = barData.maxHeight - currentScrollTop;
 
-			if (currentScrollTop === 0 && !searchBar.isOpen()) {
+			if (currentScrollTop === 0 && !searchBar.isOpen() && !changementDirection) {
 				newHeight = 0;
+				console.log('newHeight => 0', {
+					currentScrollTop: currentScrollTop,
+					isOpen: searchBar.isOpen(),
+				})
 			}
 
 			console.log('currentScrollTop:', currentScrollTop);
@@ -126,7 +146,13 @@ window.onload = () => {
 
 			// console.log('barTotalHeight:', barTotalHeight);
 
+			let currentHeight = searchBar.bar.offsetHeight;
+			console.log('CURRENT:', currentHeight);
 			if (delta > 0 && delta < barData.maxHeight) {
+				if (currentHeight >= barData.maxHeight) {
+					console.log('OK');
+					return true;
+				}
 				// searchBar.bar.style.height = `${barTotalHeight - delta}px`;
 				searchBar.bar.style.height = `${delta}px`;
 				console.log('NOUVELLE HAUTEUR:', delta);
@@ -175,7 +201,7 @@ window.onload = () => {
 		// down : closing
 		// up : opening
 		let openClosePoint = scrollData.direction === 'down' ?
-			(barData.maxHeight * 2 / 3) : (barData.maxHeight / 2);
+			(barData.maxHeight * 2 / 3) : (barData.maxHeight / 4);
 		// console.log('barHeight', barHeight)
 		// console.log('scrollData.direction', scrollData.direction)
 		// console.log('barData.maxHeight', barData.maxHeight)
@@ -186,9 +212,14 @@ window.onload = () => {
 			searchBar.bar.classList.toggle('open', true);
 			// if (!test) {
 
+			$(searchBar.bar).animate({
+				height: barData.maxHeight,
+			}, animationSpeed,);
 			if (currentScrollTop < barData.maxHeight) {
 				// element.scrollTop = 0;
-				$(element).stop().animate({scrollTop: 0}, animationSpeed);
+				if (element.scrollTop > 0) {
+					$(element).stop().animate({scrollTop: 0}, animationSpeed);
+				}
 			} else {
 				console.log('nope bloquée ?', {
 					currentScrollTop: currentScrollTop,
@@ -197,9 +228,6 @@ window.onload = () => {
 				})
 			}
 			// searchBar.bar.style.height = `${barData.maxHeight}px`;
-			$(searchBar.bar).animate({
-				height: barData.maxHeight,
-			}, animationSpeed);
 
 			// }
 			// element.scrollTop = 0;

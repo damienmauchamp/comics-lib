@@ -13,6 +13,8 @@
 
 	<h1>VOLUMES</h1>
 
+	{# display: ''|'line'|'list'|'grid' #}
+
 	{% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadStarted, display:'NEXT_TO_READ', section: {
 		title: 'Next to Read',
 		description: 'Volumes that are next to be read',
@@ -20,26 +22,18 @@
 		display: '',
 	}} %}
 
-	{#    {% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadNotStarted, display:'NEXT_TO_READ', section: { #}
-	{#        title: 'Not started', #}
-	{#        description: 'Volumes that are not started yet', #}
-	{#        id: 'nextToReadNotStarted', #}
-	{#        display: 'list', #}
-	{#    }} %} #}
+	{% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadNotStarted, display:'NEXT_TO_READ', section: {
+		title: 'Not started',
+		description: 'Volumes that are not started yet',
+		id: 'nextToReadNotStarted',
+		display: 'line scroll',
+	}} %}
 
-	{#    #}{# TMP for testing #}
-	{#    {% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadStarted, display:'NEXT_TO_READ', section: { #}
-	{#        title: 'Next to Read', #}
-	{#        description: 'Volumes that are next to be read', #}
-	{#        id: 'nextToReadStarted', #}
-	{#        display: 'side', #}
+	{#    {% include 'volume/volumes.html.twig' with {volumes:volumes.upToDate, display:'', section: { #}
+	{#        title: 'Up to date', #}
+	{#        description: 'Volumes that are up to date', #}
+	{#        id: 'upToDate' #}
 	{#    }} %} #}
-
-	{#        {% include 'volume/volumes.html.twig' with {volumes:volumes.upToDate, display:'', section: { #}
-	{#            title: 'Up to date', #}
-	{#            description: 'Volumes that are up to date', #}
-	{#            id: 'upToDate' #}
-	{#        }} %} #}
 
 	<h1>ITEMS</h1>
 	@todo

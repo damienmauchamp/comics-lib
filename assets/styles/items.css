@@ -20,11 +20,14 @@ section > div.content > div {
 	/*@apply mobile:basis-1/3;*/
 }
 
-section.list > div > div {
+section.list > div.content > div {
 	/* List view */
 	@apply flex-row grow w-full;
 	@apply max-h-56;
 	@apply px-0;
+}
+
+section.line > div.content > div {
 }
 
 section.side > div.content > div {
@@ -71,6 +74,30 @@ section.list > div .volume-img img {
 	/*@apply h-full;*/
 	@apply w-20 h-auto;
 }
+
+/* CONTENT LINE */
+section.line > div.content > div {
+	/*@apply basis-1/12;*/
+	/*@apply basis-1/8;*/
+	@apply tablet:basis-1/6;
+	@apply mobile:basis-1/3;
+}
+
+section.line.scroll > div.content > div {
+	@apply flex basis-[12.5%] grow-0 shrink-0;
+	@apply tablet:basis-1/6;
+	@apply mobile:basis-1/3;
+}
+
+section.line.scroll > div.content .volume-img,
+section.line.scroll > div.content .volume-details {
+	@apply shrink-0 grow-0;
+}
+
+section.line.scroll > div.content .volume-img img {
+	@apply w-full;
+}
+
 
 /* CONTENT SIDE */
 section.side > div.content .volume-img {

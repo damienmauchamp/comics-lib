@@ -42,6 +42,20 @@ section.list > div {
 	@apply flex flex-col;
 }
 
+/* SECTION LINE */
+/*.line-scroll {*/
+/*	@apply flex flex-nowrap overflow-x-auto;*/
+/*}*/
+
+section.line > div {
+	/* Line view */
+	@apply tablet:flex tablet:flex-nowrap tablet:overflow-x-auto;
+}
+
+section.line.scroll > div {
+	@apply flex flex-nowrap overflow-x-auto;
+}
+
 section.side > div {
 	/* Info on the side */
 	@apply section-side-div;

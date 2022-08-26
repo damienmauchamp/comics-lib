@@ -36,6 +36,7 @@ body.searching .main {
 
 	/*@apply transition-search-bar-width;*/
 	@apply bg-search-input-background;
+	@apply text-black placeholder-[#838287];
 }
 
 #search-bar input#search::-webkit-input-placeholder {
@@ -132,7 +133,7 @@ body.searching .main {
 #search-filters #search-filters-container {
 	@apply flex flex-row w-full p-search-filter bg-search-filters-background;
 	@apply rounded-search-input;
-	@apply h-[27px];
+	@apply h-[28px];
 }
 
 #search-filters .search-filter {
@@ -145,6 +146,7 @@ body.searching .main {
 
 #search-filters .search-filter.selected {
 	@apply bg-search-filters-background-selected font-semibold;
+	/* todo box shadow */
 }
 
 #search.focus #search-filters {
