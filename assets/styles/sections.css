@@ -2,7 +2,8 @@
  * SECTIONS
  */
 section {
-	@apply max-w-screen-lg m-auto;
+	/*@apply max-w-screen-lg m-auto;*/
+	@apply m-auto;
 }
 
 section + section {
@@ -16,10 +17,6 @@ section + section {
 /*section h3 {*/
 /*	@apply text-base;*/
 /*}*/
-
-section .remaining {
-	@apply text-xs;
-}
 
 /* Modules */
 .section-side-div {

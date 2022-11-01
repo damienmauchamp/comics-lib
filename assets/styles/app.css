@@ -29,7 +29,7 @@ main {
 /**/
 
 h2 {
-	@apply text-xl font-bold;
+	@apply text-sections-title;
 }
 
 h3 {

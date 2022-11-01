@@ -173,6 +173,11 @@ section > div.content .volume-img .loader > svg {
 
 .item ul.item-issues li.item-issue {
 	@apply flex flex-row;
+	transition: opacity .2s;
+}
+
+.item ul.item-issues li.item-issue.read {
+	@apply opacity-50;
 }
 
 .item ul.item-issues li.item-issue > div {
@@ -184,13 +189,44 @@ section > div.content .volume-img .loader > svg {
 }
 
 .item ul.item-issues li.item-issue > div.item-issue-name {
-	@apply grow;
+	@apply flex-col grow items-start;
 }
 
 .item ul.item-issues li.item-issue > div.item-issue-name > span.item-issue-title {
-	@apply hidden;
+	/*@apply hidden;*/
+	@apply text-xs;
 }
 
 .item ul.item-issues li.item-issue > div.item-issue-read {
 	@apply ml-auto;
+}
+
+/**
+ * ITEMS & VOLUMES
+ */
+section.volumes .volume-details .title h3,
+section.items .item-details .title h3 {
+	/* Titles */
+	@apply text-comics-item-title;
+}
+
+section.items .item-details .title h4 {
+	/* Sub titles */
+	@apply text-comics-item-subtitle;
+	@apply line-clamp-1;
+}
+
+section .remaining {
+	/* Remaining */
+	@apply text-comics-item-remaining;
+}
+
+.item .item-release-date {
+	/* Release date */
+	@apply text-comics-item-remaining;
+}
+
+.item .item-type {
+	/* Type */
+	@apply text-comics-item-remaining;
 }

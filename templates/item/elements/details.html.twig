@@ -6,7 +6,7 @@
 	<div class="title">
 		<a href="{{ path('app_item', {id:item.id}) }}">
 			<h3>{{ item.getCollectionName() }}</h3>
-			<h4>{{ item.title }}</h4>
+			<h4 title="{{ item.title }}">{{ item.title }}</h4>
 		</a>
 
 		{% if button %}
@@ -18,16 +18,17 @@
 
 	{% if display is not same as 'PROGRESS' %}
 
-		{# todo : list of issues (always 3 in line, next 2nd if started, else 1st #}
+		{# list of issues (always 3 in line, next 2nd if started, else 1st #}
 		{{ include('item/elements/issues_list.html.twig', {display:display|default('ITEM'), item:item}) }}
 
-		{# todo : info #}
-		<div>{{ item.getReleaseDate() ? item.getReleaseDate()|date("d/m/Y") : '-' }}</div>
-		<div>{{ item.getCollectionTypeName() }}</div>
-
+		{# item info #}
 		<span class="remaining"
 				data-read="{{ item.getNumberOfIssuesRead() }}"
 				data-total="{{ item.getNumberIssues() }}">{{ item.getRemainingIssuesToString(0) }}</span>
+
+		<div class="item-release-date">{{ item.getReleaseDate() ? item.getReleaseDate()|date("d/m/Y") : '-' }}</div>
+
+		<div class="item-type">{{ item.getCollectionTypeName() }}</div>
 	{% endif %}
 
 {% endblock %}

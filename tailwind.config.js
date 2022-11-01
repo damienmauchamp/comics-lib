@@ -75,7 +75,25 @@ module.exports = {
 			},
 			boxShadow: {},
 			fontFamily: {},
-			fontSize: {},
+			fontSize: {
+				'sections-title': ['1.25rem', {
+					lineHeight: '1.75rem',
+					fontWeight: '700',
+				}],
+				'comics-item-title': ['0.875rem', {
+					lineHeight: '1.25rem',
+					fontWeight: '500',
+				}],
+				'comics-item-subtitle': ['0.75rem', {
+					lineHeight: '1rem',
+					fontWeight: '400',
+				}],
+				'comics-item-remaining': ['0.75rem', {
+					lineHeight: '1rem',
+					fontWeight: '300',
+				}],
+				home: {}
+			},
 			height: {
 				'nav-bottom': navBottom.height,
 				'search-input': searchBar.input.height,
@@ -137,6 +155,7 @@ module.exports = {
 		},
 	},
 	plugins: [
-		require('tailwindcss-safe-area')
+		require('tailwindcss-safe-area'),
+		require('@tailwindcss/line-clamp')
 	],
 }
