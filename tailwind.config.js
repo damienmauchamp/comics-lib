@@ -67,6 +67,9 @@ module.exports = {
 					default: '#337ab7',
 					done: '#7cdb62',
 					ignored: 'red',
+				},
+				buttons: {
+					read: '#7cdb62',
 				}
 			},
 			borderRadius: {

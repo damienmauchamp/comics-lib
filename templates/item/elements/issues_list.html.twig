@@ -5,14 +5,37 @@
 	<ul class="item-issues">
 		{% for issue in item.getNextToReadIssues() %}
 
-			<li class="item-issue {{ issue.isRead() ? 'read' : '' }}">
+			<li class="item-issue {{ issue.isRead() ? 'read' : '' }}"
+					data-id="{{ issue.id }}"
+					data-volume-id="{{ issue.getVolume().getId() }}"
+					data-number="{{ issue.number }}"
+					data-read="{{ issue.isRead() }}"
+					{{ stimulus_target('item', 'issue') }}>
+
 				<div class="item-issue-number">{{ issue.getPosition() }}</div>
 				<div class="item-issue-name">
 					<span class="item-issue-fullname">{{ issue.getIssueName() }}</span>
 					<span class="item-issue-title">{{ issue.getName() }}</span>
 				</div>
 				<div class="item-issue-read">
-					<i class="fa fa-circle-check"></i>
+					{% include '_elements/button_read.html.twig' with {
+						action: {
+							controller:'item',
+							action:'readItemIssue'
+						},
+						attributs: [
+							{
+								name: 'data-volume-id',
+								value: issue.getVolume().getId()
+							},
+							{
+								name: 'data-issue-id',
+								value: issue.id
+							}
+						]
+					} %}
+					{#                    <a href="#" class="btn-read fa fa-circle-check" {{ stimulus_action('issue', 'readIssue') }} #}
+					{#                            data-issue-id="{{ issue.id }}"></a> #}
 				</div>
 			</li>
 

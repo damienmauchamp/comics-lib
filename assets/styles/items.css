@@ -230,3 +230,35 @@ section .remaining {
 	/* Type */
 	@apply text-comics-item-remaining;
 }
+
+.btn-read {
+	@apply text-xs;
+	/*@apply hover: ;*/
+}
+
+.read .btn-read {
+	@apply text-buttons-read;
+	/*@apply hover: ;*/
+}
+
+.btn-read > svg {
+	@apply pointer-events-none;
+}
+
+.volume-details .btn-read,
+.item-issue .item-issue-read .btn-read {
+	/* read button */
+	/* fa-circle-check */
+	/*@apply before:content-[""];*/
+	/*@apply before:font-['Font Awesome 5 Free'];*/
+	/*font-weight: 400;*/
+	/*font-family: "Font Awesome 5";*/
+	/*@apply before:content-["\f058"]*/
+	/*@apply font-['Font Awesome 5']*/
+}
+
+/*.volume-details .btn-read:before,*/
+/*.item-issue .item-issue-read .btn-read:before {*/
+/*	@apply fa;*/
+/*	font-family: "Font Awesome 5*/
+/*}*/

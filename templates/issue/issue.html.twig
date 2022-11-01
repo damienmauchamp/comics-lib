@@ -29,8 +29,18 @@
 			</a>
 
 			{#            {% if button %} #}
-			<a href="#" class="btn-read" {{ stimulus_action('issue', 'read') }}
-					data-issue-id="{{ issue.id }}">✔</a>
+			{% include '_elements/button_read.html.twig' with {
+				action: {
+					controller:'issue',
+					action:'read'
+				},
+				attributs: [{
+					name: 'data-issue-id',
+					value: issue.id
+				}]
+			} %}
+			{#            <a href="#" class="btn-read fa fa-circle-check" {{ stimulus_action('issue', 'read') }} #}
+			{#                    data-issue-id="{{ issue.id }}"></a> #}
 			{#            <a href="#" class="btn-read" {{ stimulus_action('volume', 'read') }} data-volume-id="{{ volume.id }}">✔</a> #}
 			{#            {% endif %} #}
 

@@ -14,9 +14,9 @@ export default class extends Controller {
 		const volumeId = button.dataset.volumeId;
 		const volume = this.elementTargets.find(e => e.dataset.id === volumeId)
 
-		// console.log('button', button);
-		// console.log('volumeId', volumeId);
-		// console.log('volume', volume)
+		console.log('button', button);
+		console.log('volumeId', volumeId);
+		console.log('volume', volume)
 		// console.log('this.targets....', this.targets.findAll('element'));
 		// console.log('this.elementTargets', this.elementTargets);
 

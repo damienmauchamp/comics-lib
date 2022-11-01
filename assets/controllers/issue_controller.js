@@ -13,51 +13,57 @@ export default class extends Controller {
 		const button = event.target;
 		const issueId = button.dataset.issueId;
 		const issue = this.elementTargets.find(e => e.dataset.id === issueId)
+		const read = Number.parseInt(issue.dataset.read);
 
 		console.log({
 			button: button,
 			issueId: issueId,
 			issue: issue,
+			read: read,
 		})
 
 		event.preventDefault();
 
-		const read = Number.parseInt(issue.dataset.read),
-			readUnread = read ? 'unread' : 'read';
-		const url = `/issue/${issueId}/${readUnread}`;
-		const form = new FormData();
+		this.readIssue(event, issueId, read)
 
-		fetch(url, {
-			method: 'POST',
-			body: form
-		}).then(response => {
-			if (response.ok) {
-				console.log('response', response)
-				return response.json();
-			}
-			throw new Error('Network response was not ok.');
-		}).then(json => json.data).then(data => {
-
-			this.setVolumeIssueRead(event, issueId, read);
-
-			return data;
-
-		}).then(data => {
-
-			// if read is in the "Next to read" section, update the next to read section
-			const section = document.querySelector('section#volume-next-to-read');
-
-			if (section) {
-				const volume = section.querySelector('div.volume');
-				// this.setNextToRead(section, data);
-				this.setVolumeNextToReadIssue(event, volume, data);
-			}
-
-			return data;
-
-		}).catch(error => {
-			console.log(error);
-		});
+		// const read = Number.parseInt(issue.dataset.read),
+		// 	readUnread = read ? 'unread' : 'read';
+		// const url = `/issue/${issueId}/${readUnread}`;
+		// const form = new FormData();
+		//
+		// fetch(url, {
+		// 	method: 'POST',
+		// 	body: form
+		// }).then(response => {
+		// 	if (response.ok) {
+		// 		console.log('response', response)
+		// 		return response.json();
+		// 	}
+		// 	throw new Error('Network response was not ok.');
+		// }).then(json => json.data).then(data => {
+		//
+		// 	this.setVolumeIssueRead(event, issueId, read);
+		//
+		// 	return data;
+		//
+		// }).then(data => {
+		//
+		// 	// if read is in the "Next to read" section, update the next to read section
+		// 	const section = document.querySelector('section#volume-next-to-read');
+		//
+		// 	if (section) {
+		// 		const volume = section.querySelector('div.volume');
+		// 		// this.setNextToRead(section, data);
+		// 		this.setVolumeNextToReadIssue(event, volume, data);
+		// 	}
+		//
+		// 	// todo : if item is on the page
+		//
+		// 	return data;
+		//
+		// }).catch(error => {
+		// 	console.log(error);
+		// });
 
 	}
 }

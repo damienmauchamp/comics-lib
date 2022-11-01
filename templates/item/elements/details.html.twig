@@ -10,8 +10,19 @@
 		</a>
 
 		{% if button %}
+			{% include '_elements/button_read.html.twig' with {
+				action: {
+					controller:'item',
+					action:'read'
+				},
+				attributs: [{
+					name: 'data-item-id',
+					value: item.id
+				}]
+			} %}
 			{#            <a href="{{ path('app_issue_read', { 'id': item.getNextToreadissue().id }) }}" class="btn-read">✔READ</a> #}
-			<a href="#" class="btn-read" {{ stimulus_action('item', 'read') }} data-item-id="{{ item.id }}">✔</a>
+			{#            <a href="#" class="btn-read fa fa-circle-check" {{ stimulus_action('item', 'read') }} #}
+			{#                    data-item-id="{{ item.id }}"></a> #}
 		{% endif %}
 
 	</div>

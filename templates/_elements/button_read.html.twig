@@ -1,0 +1,8 @@
+<a href="#" class="btn-read"
+		{{ stimulus_action(action.controller, action.action) }}
+
+		{% if attributs is defined %}{% for attribut in attributs %}
+			{{ attribut.name ~ '=' ~ attribut.value }}
+		{% endfor %}{% endif %}>
+	<i class="fa fa-circle-check"></i>
+</a>

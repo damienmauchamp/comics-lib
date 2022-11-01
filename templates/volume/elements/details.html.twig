@@ -23,8 +23,19 @@
 		</h3>
 
 		{% if button %}
+			{% include '_elements/button_read.html.twig' with {
+				action: {
+					controller:'volume',
+					action:'read'
+				},
+				attributs: [{
+					name: 'data-volume-id',
+					value: volume.id
+				}]
+			} %}
 			{#            <a href="{{ path('app_issue_read', { 'id': volume.getNextToreadissue().id }) }}" class="btn-read">✔READ</a> #}
-			<a href="#" class="btn-read" {{ stimulus_action('volume', 'read') }} data-volume-id="{{ volume.id }}">✔</a>
+			{#            <a href="#" class="btn-read fa fa-circle-check" {{ stimulus_action('volume', 'read') }} #}
+			{#                    data-volume-id="{{ volume.id }}"></a> #}
 		{% endif %}
 
 	</div>
