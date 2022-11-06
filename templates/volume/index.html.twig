@@ -4,6 +4,53 @@
 
 {% block body %}
 
+	{# header #}
+	<div class="header">
+
+		{# name, year #}
+		<div class="header-line" id="general">
+			<div class="volume-info">
+				<h1>{{ volume.name }} <span class="year">({{ volume.startYear() }})</span></h1>
+				<div class="issues-number">{{ volume.numberIssues ~ ' issue' ~ (volume.numberIssues > 1 ? 's' : '') }} </div>
+			</div>
+
+			{# actions #}
+			<div class="volume-actions">
+				@todo
+				{#                <a href="{{ path('app_volume_update', { 'idc': volume.idc }) }}" target="_blank">UPDATE</a> #}
+				<button>Update</button>
+			</div>
+		</div>
+
+	</div>
+
+	{# todo : general info #}
+	<img src="{{ volume.image }}" alt="{{ volume.name }}" style="height:100px;"/>
+
+	{# description #}
+	{% if volume.description %}
+		<section class="description">
+			<h2>Description</h2>
+			<p class="description">{{ volume.description }}</p>
+		</section>
+	{% endif %}
+
+	{# Next to read #}
+	{% include 'volume/sections/next_to_read.html.twig' with {volume:volume} %}
+
+	{# todo : Items #}
+	{% include 'volume/sections/items.html.twig' with {items:items, from: 'volume'} %}
+
+	{# Issues #}
+	{% include 'issue/issues.html.twig' with {issues:issues, from: 'volume', display: 'VOLUME'} %}
+
+	{# todo : Publisher #}
+	{% include 'volume/sections/publisher.html.twig' with {publisher:publisher, section: {id:'volume-publisher'}} %}
+
+	<hr>
+	<hr>
+	<hr>
+
 	{# todo : Info #}
 	<h1>{{ volume.name }} ({{ volume.id }})</h1>
 	<img src="{{ volume.image }}" alt="{{ volume.name }}" style="height:100px;"/>
@@ -14,16 +61,5 @@
 		<li>{{ volume.description }}</li>
 	</ul>
 
-	{# Next to read #}
-	{% include 'volume/sections/next_to_read.html.twig' with {volume:volume} %}
-
-	{# todo : Publisher #}
-	{% include 'volume/sections/publisher.html.twig' with {publisher:publisher, section: {id:'volume-publisher'}} %}
-
-	{# todo : Items #}
-	{% include 'volume/sections/items.html.twig' with {items:items, from: 'volume'} %}
-
-	{# Issues #}
-	{% include 'issue/issues.html.twig' with {issues:issues, from: 'volume', display: 'VOLUME'} %}
 
 {% endblock %}

@@ -1,0 +1,25 @@
+.header {
+	@apply flex flex-col;
+}
+
+.header-line {
+	@apply flex;
+}
+
+.header-line#general {
+	@apply justify-between;
+}
+
+.volume-info {
+	@apply flex items-center;
+}
+
+.volume-info .issues-number {
+	@apply text-xs;
+	@apply before:content-['·'] before:px-1;
+	/*@apply before:content-["· "];*/
+}
+
+.volume-info .issues-number:before {
+	/*@apply content-["· "]*/
+}

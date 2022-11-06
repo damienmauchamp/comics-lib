@@ -27,3 +27,6 @@ import './styles/sections.css';
 import './styles/items.css';
 import './styles/progress_bar.css';
 import './styles/search.css';
+
+// by page type
+import './styles/volume.css';
