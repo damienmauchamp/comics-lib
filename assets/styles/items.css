@@ -216,6 +216,11 @@ section.items .item-details .title h4 {
 	@apply line-clamp-1;
 }
 
+
+section .actions {
+	@apply flex justify-between;
+}
+
 section .remaining {
 	/* Remaining */
 	@apply text-comics-item-remaining;

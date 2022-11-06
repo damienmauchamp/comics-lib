@@ -21,7 +21,16 @@
 				{{ name }}
 			</a>
 		</h3>
+	</div>
 
+	<div class="actions">
+
+		{% if display is not same as 'PROGRESS' %}
+			<span class="remaining"
+					data-read="{{ volume.getNumberOfIssuesRead() }}"
+					data-total="{{ volume.getNumberIssues() }}">{{ volume.getRemainingIssuesToString(1) }}</span>
+		{% endif %}
+		
 		{% if button %}
 			{% include '_elements/button_read.html.twig' with {
 				action: {
@@ -39,11 +48,5 @@
 		{% endif %}
 
 	</div>
-
-	{% if display is not same as 'PROGRESS' %}
-		<span class="remaining"
-				data-read="{{ volume.getNumberOfIssuesRead() }}"
-				data-total="{{ volume.getNumberIssues() }}">{{ volume.getRemainingIssuesToString(1) }}</span>
-	{% endif %}
 
 {% endblock %}

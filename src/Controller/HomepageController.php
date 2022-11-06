@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomepageController extends AbstractController {
-	#[Route('/homepage', name: 'home')]
+	#[Route('/', name: 'home')]
 	public function index(VolumeRepository $volumeRepository,
 						  ItemRepository   $itemRepository): Response {
 

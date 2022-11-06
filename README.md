@@ -5,7 +5,7 @@
 ### issues
 
 - [ ] rendre scrollable la liste des issues dans les items ?
-- [ ] bouton "read" à droite aligné au remaining ?
+- [x] bouton "read" à droite aligné au remaining ?
 - [ ] régler problème de scroll qui activé la barre de recherche même si on est au milieu de la page
 
 ### features
