@@ -73,10 +73,47 @@ export default class extends Controller {
 
 		}).then(data => {
 
+			// moving it to "Next to Read" section if nedded
 			this.moveVolumeToNextToRead(event, volume);
 
 			return data;
+		}).then(data => {
 
+			// todo : handle read/not read ?
+			// checking if the issue read is in one of the issue list
+			const sectionNotStartedItems = document.querySelector('section#nextToReadNotStartedItems');
+			let itemIssuesNotStarted = Array.from(sectionNotStartedItems.querySelectorAll('.item-issue'))
+				.filter(e => e.dataset.id === String(issueId));
+			console.log('itemIssuesNotStarted', itemIssuesNotStarted)
+			if (itemIssuesNotStarted) {
+				itemIssuesNotStarted.forEach(itemIssue => {
+					let item = itemIssue.closest('.item');
+					// moving the item in the next to read
+					this.moveItemToNextToRead(event, item);
+				})
+			}
+
+			// marking issue as read
+			const itemIssuesSection = document.querySelector('section#nextToReadStartedItems');
+			let itemIssues = Array.from(itemIssuesSection.querySelectorAll('.item-issue'))
+				.filter(e => e.dataset.id === String(issueId));
+			console.log('itemIssues', itemIssues)
+			if (itemIssues) {
+				itemIssues.forEach(itemIssue => {
+					// marking it as read
+					itemIssue.classList.add('read');
+					// let item = itemIssue.closest('.item');
+					// // moving the item in the next to read
+					// this.moveItemToNextToRead(event, item);
+				})
+			}
+			// issueId
+			// itemIssuesSection.querySelectorAll('.item-issue')
+			// let itemIssue = Array.from(itemIssuesSection.querySelectorAll('.item-issue'))
+			// 	.find(e => e.dataset.id === String(volumeId));
+			// item-issue
+
+			return data;
 		}).catch(error => {
 			console.log(error);
 		});
