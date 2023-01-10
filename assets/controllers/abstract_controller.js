@@ -66,10 +66,17 @@ export default class extends Controller {
 			volumeImg = volume.querySelector('.volume-img'),
 			volumeDetails = volume.querySelector('.volume-details');
 
+		const nextToReadVolume = document.querySelector('section#volume-next-to-read');
 		if (!data.next) {
 			if (this.isHomepage() || this.isComicsPage()) {
 				this.moveVolumeToUpToDate(event, volume, data)
 			} else {
+				if (nextToReadVolume) {
+					// where's on the volume page
+					// hiding the Next to Read section
+					nextToReadVolume.hidden = true;
+					return true;
+				}
 				volume.classList.add('done');
 			}
 			return true;
@@ -114,6 +121,14 @@ export default class extends Controller {
 			}
 		} catch (e) {
 			console.error('[REMAINING] Erreur', e, remaining)
+		}
+
+		//
+		if (nextToReadVolume) {
+			// where's on the volume page
+			// displaying the Next to Read section
+			nextToReadVolume.hidden = false;
+			return true;
 		}
 	}
 
