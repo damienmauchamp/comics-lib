@@ -27,7 +27,8 @@
 
 	</div>
 
-	{% if display is not same as 'PROGRESS' %}
+	{#    {% if display is not same as 'PROGRESS' %} #}
+	{% if display not in ['PROGRESS', 'NEXT_TO_READ'] %}
 
 		{# list of issues (always 3 in line, next 2nd if started, else 1st #}
 		{{ include('item/elements/issues_list.html.twig', {display:display|default('ITEM'), item:item}) }}

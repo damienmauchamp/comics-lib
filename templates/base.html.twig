@@ -16,33 +16,69 @@
 	</head>
 	<body>
 
-		<nav class="top">
+		{% set route = app.request.attributes.get('_route') %}
+		{% set nav = [
+			{
+				route: 'home',
+				params: [],
+				title: 'Home',
+				icon: 'home',
+			},
+			{
+				route: 'comics',
+				params: [],
+				title: 'Comics',
+				icon: 'list',
+			},
+			{
+				route: '#',
+				params: [],
+				title: 'Collections',
+				icon: 'book',
+			},
+			{
+				route: '#',
+				params: [],
+				title: 'Search',
+				icon: 'magnifying-glass',
+			}
+		] %}
+		{% set navBottom = ['home',  'comics', 'items', 'search'] %}
+
+		<nav class="top" data-page="{{ route }}">
 			<ul>
-				<li><a href="{{ path('home') }}">Home</a></li>
-				{#        <li><a href="{{ path('about') }}">About</a></li> #}
-				{#        <li><a href="{{ path('contact') }}">Contact</a></li> #}
+				{% for line in nav %}
+					{# no search in top nav #}
+					{% if line.route != 'Search' %}
+						<li data-page="{{ line.route }}" class="{{ route == line.route ? 'selected' : '' }}">
+							<a href="{{ line.route != '#' ? path(line.route, line.params) : line.route }}">{{ line.title }}</a>
+						</li>
+					{% endif %}
+				{% endfor %}
 			</ul>
 		</nav>
 
 		<main>
 			{% block searchbar %}{% endblock %}
 			<div class="main">
+				<h1>{% block pagetitle %}{% endblock %}</h1>
 				{% block body %}{% endblock %}
 			</div>
 		</main>
 
 		<nav class="bottom">
 			<ul class="nav-items">
-				<li>
-					<a href="{{ path('home') }}" title="Home">
-						<i class="fa fa-home"></i>
-					</a>
-				</li>
-				<li>
-					<a href="#" title="Comics">
-						<i class="fa fa-list"></i>
-					</a>
-				</li>
+				{% for line in nav %}
+
+					{# filtering #}
+					{% if line.route  in navBottom %}
+						<li class="{{ route == line.route ? 'selected' : '' }}">
+							<a href="{{ line.route != '#' ? path(line.route, line.params) : line.route }}" title="{{ line.title }}">
+								<i class="fa fa-{{ line.icon }}"></i>
+							</a>
+						</li>
+					{% endif %}
+				{% endfor %}
 				<li>
 					<a href="#" title="Collections">
 						<i class="fa fa-book"></i>
@@ -53,8 +89,6 @@
 						<i class="fa fa-magnifying-glass"></i>
 					</a>
 				</li>
-				{#        <li><a href="{{ path('about') }}">About</a></li> #}
-				{#        <li><a href="{{ path('contact') }}">Contact</a></li> #}
 			</ul>
 		</nav>
 	</body>

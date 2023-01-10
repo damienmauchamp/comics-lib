@@ -64,7 +64,7 @@ export default class extends Controller {
 			// marking as read
 			this.setVolumeNextToReadIssue(event, volume, data);
 
-			if (!this.isHomepage()) {
+			if (!this.isHomepage() && !this.isComicsPage()) {
 				// mark issue as read if we're on the volume page since it'd be listed
 				this.setVolumeIssueRead(event, issueId, false);
 			}
@@ -73,7 +73,7 @@ export default class extends Controller {
 
 		}).then(data => {
 
-			// moving it to "Next to Read" section if nedded
+			// moving it to "Next to Read" section if needed
 			this.moveVolumeToNextToRead(event, volume);
 
 			return data;
@@ -82,8 +82,8 @@ export default class extends Controller {
 			// todo : handle read/not read ?
 			// checking if the issue read is in one of the issue list
 			const sectionNotStartedItems = document.querySelector('section#nextToReadNotStartedItems');
-			let itemIssuesNotStarted = Array.from(sectionNotStartedItems.querySelectorAll('.item-issue'))
-				.filter(e => e.dataset.id === String(issueId));
+			let itemIssuesNotStarted = sectionNotStartedItems ? Array.from(sectionNotStartedItems.querySelectorAll('.item-issue'))
+				.filter(e => e.dataset.id === String(issueId)) : null;
 			console.log('itemIssuesNotStarted', itemIssuesNotStarted)
 			if (itemIssuesNotStarted) {
 				itemIssuesNotStarted.forEach(itemIssue => {
@@ -95,8 +95,8 @@ export default class extends Controller {
 
 			// marking issue as read
 			const itemIssuesSection = document.querySelector('section#nextToReadStartedItems');
-			let itemIssues = Array.from(itemIssuesSection.querySelectorAll('.item-issue'))
-				.filter(e => e.dataset.id === String(issueId));
+			let itemIssues = itemIssuesSection ? Array.from(itemIssuesSection.querySelectorAll('.item-issue'))
+				.filter(e => e.dataset.id === String(issueId)) : null;
 			console.log('itemIssues', itemIssues)
 			if (itemIssues) {
 				itemIssues.forEach(itemIssue => {

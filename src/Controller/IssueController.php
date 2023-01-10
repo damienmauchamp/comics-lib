@@ -108,11 +108,10 @@ class IssueController extends AbstractController {
 			$issueRepo->findItemNextToReadIssue($item, $issue) :
 			$issueRepo->findVolumeNextToReadIssue($volume, $issue);
 
-		$render = $item ? 'todo' :
-			$this->render('volume/volume.html.twig', [
-				'wrap' => false,
-				'volume' => $volume,
-			]);
+		$render = $item ? 'todo' : $this->render('volume/volume.html.twig', [
+			'wrap' => false,
+			'volume' => $volume,
+		]);
 
 		$next = $nextIssue ? [
 			'id' => $nextIssue->getId(),
@@ -148,6 +147,8 @@ class IssueController extends AbstractController {
 					],
 					'progress' => $volume->getProgress(),
 					'done' => $volume->isDone(),
+//					'html' => $volume->isDone() ? $render->getContent() : '',
+					'html' => $render->getContent(),
 				],
 				'next' => $next,
 			],

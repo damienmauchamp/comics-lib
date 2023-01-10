@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Home{% endblock %}
+{% block pagetitle %}Homepage{% endblock %}
 
 {% block searchbar %}
 
@@ -9,25 +10,26 @@
 
 {% endblock %}
 
+
 {% block body %}
 
-	<h1>Volumes</h1>
+	{#    <h1>Volumes</h1> #}
 
 	{# display: ''|'line'|'line scroll'|'list'|'grid' #}
 
 	{% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadStarted, display:'NEXT_TO_READ', section: {
-		title: 'Next to Read',
+		title: 'Comics',
 		description: 'Volumes that are next to be read',
 		id: 'nextToReadStarted',
 		display: '',
 	}} %}
 
-	{% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadNotStarted, display:'NEXT_TO_READ', section: {
-		title: 'Not started',
-		description: 'Volumes that are not started yet',
-		id: 'nextToReadNotStarted',
-		display: 'line scroll',
-	}} %}
+	{#    {% include 'volume/volumes.html.twig' with {volumes:volumes.nextToReadNotStarted, display:'NEXT_TO_READ', section: { #}
+	{#        title: 'Not started', #}
+	{#        description: 'Volumes that are not started yet', #}
+	{#        id: 'nextToReadNotStarted', #}
+	{#        display: 'line scroll', #}
+	{#    }} %} #}
 
 	{#    {% include 'volume/volumes.html.twig' with {volumes:volumes.upToDate, display:'', section: { #}
 	{#        title: 'Up to date', #}
@@ -35,20 +37,20 @@
 	{#        id: 'upToDate' #}
 	{#    }} %} #}
 
-	<h1>Items</h1>
+	{#    <h1>Items</h1> #}
 
 	{% include 'item/items.html.twig' with {items:items.nextToReadStarted, display:'NEXT_TO_READ', section: {
-		title: 'Read next',
+		title: 'Items',
 		description: 'Volumes that are not started yet',
 		id: 'nextToReadStartedItems',
-		display: 'line scroll',
+		display: '',
 	}} %}
 
-	{% include 'item/items.html.twig' with {items:items.nextToReadNotStarted, display:'NEXT_TO_READ', section: {
-		title: 'Not started',
-		description: 'Volumes that are not started yet',
-		id: 'nextToReadNotStartedItems',
-		display: 'line scroll',
-	}} %}
+	{#    {% include 'item/items.html.twig' with {items:items.nextToReadNotStarted, display:'NEXT_TO_READ', section: { #}
+	{#        title: 'Not started', #}
+	{#        description: 'Volumes that are not started yet', #}
+	{#        id: 'nextToReadNotStartedItems', #}
+	{#        display: 'line scroll', #}
+	{#    }} %} #}
 
 {% endblock %}

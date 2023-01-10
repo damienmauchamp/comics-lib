@@ -8,8 +8,22 @@ export default class extends Controller {
 
 	/** UTILS */
 
+	getCurrentPage() {
+		try {
+			// return document.querySelector('nav.top li.selected').dataset.page
+			return document.querySelector('nav.top').dataset.page;
+		} catch (e) {
+			console.error(e);
+			return null;
+		}
+	}
+
 	isHomepage() {
-		return !!document.querySelector('section#nextToReadStarted');
+		return this.getCurrentPage() === 'home';
+	}
+
+	isComicsPage() {
+		return this.getCurrentPage() === 'comics';
 	}
 
 	ajax(method, url, data = {}) {
@@ -53,9 +67,8 @@ export default class extends Controller {
 			volumeDetails = volume.querySelector('.volume-details');
 
 		if (!data.next) {
-			if (this.isHomepage()) {
-				// we're on the homepage, so we remove the completed volume
-				volume.remove();
+			if (this.isHomepage() || this.isComicsPage()) {
+				this.moveVolumeToUpToDate(event, volume, data)
 			} else {
 				volume.classList.add('done');
 			}
@@ -107,7 +120,7 @@ export default class extends Controller {
 	moveVolumeToNextToRead(event, volume) {
 		console.log('%cmoveVolumeToNextToRead', 'font-size: 20px');
 
-		if (!this.isHomepage()) {
+		if (!this.isHomepage() && !this.isComicsPage()) {
 			// skipping
 			return;
 		}
@@ -127,6 +140,44 @@ export default class extends Controller {
 
 	}
 
+	moveVolumeToUpToDate(event, volume, data = null) {
+		console.log('%cmoveVolumeToUpToDate', 'font-size: 20px');
+
+		if (!this.isHomepage() && !this.isComicsPage()) {
+			// skipping
+			return;
+		}
+
+		// Moving the volume to the upToDate section
+		const nextToReadStarted = document.querySelector('section#nextToReadStarted'),
+			upToDate = document.querySelector('section#upToDate');
+
+		if (data) {
+
+			// Creating a new element with the new html
+			let newVolume = document.createElement("div");
+			newVolume.innerHTML = data.volume.html;
+			console.log('setVolumeNextToReadIssue->moveVolumeToUpToDate newVolume:', newVolume)
+
+			//
+			const list = upToDate.querySelector('.volumes-list');
+			list.insertBefore(newVolume.firstElementChild, list.firstChild);
+
+			// removing the volume from the old list
+			volume.remove();
+
+			return;
+		}
+
+		if (nextToReadStarted.contains(volume)) {
+			// volume is just being started
+			// we move it first to the nextToReadStarted section
+			const list = upToDate.querySelector('.volumes-list');
+			// nextToReadStarted.appendChild(volume);
+			list.insertBefore(volume, list.firstChild);
+		}
+	}
+
 	updateItemList(event, item) {
 		console.log('%cupdateItemList', 'font-size: 20px');
 		console.log('todo : this.updateItemList(event, item);', {item: item})
@@ -136,7 +187,7 @@ export default class extends Controller {
 	moveItemToNextToRead(event, item) {
 		console.log('%cmoveItemToNextToRead', 'font-size: 20px');
 
-		if (!this.isHomepage()) {
+		if (!this.isHomepage() && !this.isComicsPage()) {
 			// skipping
 			return;
 		}

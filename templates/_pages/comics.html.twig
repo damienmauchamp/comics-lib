@@ -1,0 +1,28 @@
+{% extends 'homepage/index.html.twig' %}
+
+{% block title %}All comics{% endblock %}
+{% block pagetitle %}All comics{% endblock %}
+
+{% block body %}
+
+	{% include 'volume/volumes.html.twig' with {volumes:nextToReadStarted, display:'NEXT_TO_READ', section: {
+		title: 'Read next',
+		description: 'Volumes that are next to be read',
+		id: 'nextToReadStarted',
+		display: '',
+	}} %}
+
+	{% include 'volume/volumes.html.twig' with {volumes:nextToReadNotStarted, display:'NEXT_TO_READ', section: {
+		title: 'Not started',
+		description: 'Volumes that are not started yet',
+		id: 'nextToReadNotStarted',
+		display: 'line scroll',
+	}} %}
+
+	{% include 'volume/volumes.html.twig' with {volumes:upToDate, display:'', section: {
+		title: 'Up to date',
+		description: 'Volumes that are up to date',
+		id: 'upToDate'
+	}} %}
+
+{% endblock %}
