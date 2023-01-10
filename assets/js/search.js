@@ -36,6 +36,10 @@ window.onload = () => {
 		navSearchButton = document.querySelector('nav.bottom .nav-items a#nav-search');
 
 	console.log('loaded')
+	if (!searchBar.container) {
+		console.log('no search bar (yet ?)')
+		return;
+	}
 	barData.maxHeight = searchBar.container.offsetHeight + searchBar.input.offsetHeight;
 
 	const animationSpeed = 300;
